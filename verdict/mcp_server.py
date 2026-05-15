@@ -303,6 +303,12 @@ async def main() -> None:
         await server.run(read_stream, write_stream, server.create_initialization_options())
 
 
+def entrypoint():
+    import asyncio
+
+    asyncio.run(main())
+
+
 if __name__ == "__main__":
     asyncio.run(main())
 
