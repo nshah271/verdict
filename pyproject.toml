@@ -18,10 +18,14 @@ classifiers = [
   "License :: OSI Approved :: MIT License",
   "Operating System :: OS Independent",
 ]
-dependencies = []
+dependencies = ["mcp>=1.0.0", "click>=8.0.0"]
 
 [project.optional-dependencies]
-dev = ["ruff", "pytest", "pre-commit"]
+dev = ["ruff", "pytest", "pre-commit", "pytest-asyncio"]
+
+[project.scripts]
+verdict-mcp = "verdict.mcp_server:entrypoint"
+verdict = "verdict.cli:cli"
 
 [tool.setuptools.packages.find]
 include = ["verdict*"]
