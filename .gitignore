@@ -1,11 +1,8 @@
-<<<<<<< HEAD
-# Local handoff log, never push (per TEAM workflow)
-onboarding.md
-=======
 # Local handoff log and rules, never push (per TEAM workflow)
 onboarding.md
 rules.md
->>>>>>> 87a8c47eb1e3b37585fbfec048801ab463282e7a
+TEAM.md
+verdict-spec.md
 
 # Byte-compiled / optimized
 __pycache__/
