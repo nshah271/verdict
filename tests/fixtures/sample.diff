@@ -1,0 +1,52 @@
+diff --git a/src/app.py b/src/app.py
+index 1234567..abcdefg 100644
+--- a/src/app.py
++++ b/src/app.py
+@@ -10,0 +11,3 @@ def existing_function():
++def new_function():
++    """A newly added function."""
++    return 42
+@@ -20,2 +22,0 @@ def another_function():
+-    # This line was removed
+-    old_code = True
+diff --git a/tests/test_feature.py b/tests/test_feature.py
+new file mode 100644
+index 0000000..1234567
+--- /dev/null
++++ b/tests/test_feature.py
+@@ -0,0 +1,5 @@
++def test_new_feature():
++    """Test the new feature."""
++    result = new_function()
++    assert result == 42
++
+diff --git a/old_file.py b/new_file.py
+similarity index 100%
+rename from old_file.py
+rename to new_file.py
+@@ -5,0 +6,2 @@ def renamed_function():
++    # Added line in renamed file
++    print("Hello")
+diff --git a/data/image.png b/data/image.png
+index 1234567..abcdefg 100644
+Binary files a/data/image.png and b/data/image.png differ
+diff --git a/deleted_only.py b/deleted_only.py
+index 1234567..abcdefg 100644
+--- a/deleted_only.py
++++ b/deleted_only.py
+@@ -10,3 +9,0 @@ def some_function():
+-    # All these lines
+-    # were deleted
+-    pass
+diff --git a/src/multi_hunk.py b/src/multi_hunk.py
+index 1234567..abcdefg 100644
+--- a/src/multi_hunk.py
++++ b/src/multi_hunk.py
+@@ -5,0 +6,2 @@ def first_section():
++    # First hunk addition
++    x = 1
+@@ -15,0 +18,2 @@ def second_section():
++    # Second hunk addition
++    y = 2
+
+# Made with Bob
