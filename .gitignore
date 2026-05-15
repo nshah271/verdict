@@ -1,5 +1,6 @@
-# Local handoff log, never push (per TEAM workflow)
+# Local handoff log and rules, never push (per TEAM workflow)
 onboarding.md
+rules.md
 
 # Byte-compiled / optimized
 __pycache__/
