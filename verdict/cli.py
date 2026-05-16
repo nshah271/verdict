@@ -72,16 +72,21 @@ def check_mcp_installed() -> bool:
 
 
 def install_bob_mode() -> None:
-    """Install verdict Custom Mode as a project-level Bob configuration.
+    """Install verdict Custom Mode and slash commands as project-level Bob configuration.
 
     This function:
     1. Creates .bob directory in the current project
     2. Copies custom_modes.yaml to .bob/custom_modes.yaml
-    3. Checks if MCP server is installed and warns if not
+    3. Creates .bob/commands directory and installs slash commands
+    4. Checks if MCP server is installed and warns if not
 
     Bob Custom Modes can be installed at two levels:
     - Project: .bob/custom_modes.yaml (this function)
     - Global: ~/.bob/settings/custom_modes.yaml (user must do manually)
+
+    Slash commands can be installed at two levels:
+    - Project: .bob/commands/*.yaml (this function)
+    - Global: ~/.bob/commands/*.yaml (user must do manually)
     """
     try:
         # Install to project-level .bob directory
@@ -91,7 +96,7 @@ def install_bob_mode() -> None:
         # Create .bob directory
         project_bob_dir.mkdir(exist_ok=True)
 
-        # Get source file from package
+        # Get source directory from package
         package_dir = Path(__file__).parent / "bob_integration"
         custom_mode_source = package_dir / "custom_mode.yaml"
 
@@ -106,6 +111,29 @@ def install_bob_mode() -> None:
             shutil.copy2(custom_mode_source, custom_mode_target)
             click.echo(f"[OK] Custom Mode installed: {custom_mode_target}")
 
+        # Install slash commands
+        commands_dir = project_bob_dir / "commands"
+        commands_dir.mkdir(exist_ok=True)
+        
+        slash_commands_source = package_dir / "slash_commands"
+        if slash_commands_source.exists():
+            # Copy all .md files from slash_commands directory
+            installed_commands = []
+            for md_file in slash_commands_source.glob("*.md"):
+                target_file = commands_dir / md_file.name
+                if target_file.exists():
+                    click.echo(f"Slash command already exists: {target_file.name}")
+                else:
+                    shutil.copy2(md_file, target_file)
+                    installed_commands.append(md_file.stem)
+            
+            if installed_commands:
+                click.echo(f"[OK] Slash commands installed: {', '.join(f'/{cmd}' for cmd in installed_commands)}")
+            else:
+                click.echo("All slash commands already installed")
+        else:
+            click.echo("Warning: No slash commands found in package")
+
         # Check if MCP server is installed
         mcp_installed = check_mcp_installed()
         if not mcp_installed:
@@ -114,10 +142,13 @@ def install_bob_mode() -> None:
 
         # Print usage instructions
         click.echo("\nTo use:")
-        click.echo("1. Restart Bob to load the new mode")
+        click.echo("1. Restart Bob to load the new mode and slash commands")
         click.echo('2. Switch to "Verifier" mode after a coding session')
-        click.echo("\nNote: This installs as a project-level custom mode.")
-        click.echo("For global installation, copy to ~/.bob/settings/custom_modes.yaml")
+        click.echo("3. Or type /verify in any mode for a one-shot audit")
+        click.echo("\nNote: This installs as a project-level configuration.")
+        click.echo("For global installation:")
+        click.echo("  - Custom mode: copy to ~/.bob/settings/custom_modes.yaml")
+        click.echo("  - Slash commands: copy to ~/.bob/commands/")
 
     except Exception as e:
         click.echo(f"✗ Installation failed: {e}", err=True)

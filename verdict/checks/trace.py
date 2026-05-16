@@ -88,6 +88,8 @@ class TraceCheck:
             env = os.environ.copy()
             env["VERDICT_TRACE_TARGETS"] = targets_file.name
             env["VERDICT_TRACE_OUTPUT"] = output_file.name
+            env["GIT_TERMINAL_PROMPT"] = "0"
+            env["GIT_OPTIONAL_LOCKS"] = "0"
 
             try:
                 # TODO: wire self.test_command through (shlex.split, then append -p verdict._tracer_plugin)
@@ -98,6 +100,7 @@ class TraceCheck:
                     timeout=180,
                     capture_output=True,
                     text=True,
+                    stdin=subprocess.DEVNULL,
                 )
                 exit_code = result.returncode
             except subprocess.TimeoutExpired:

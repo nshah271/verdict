@@ -2,6 +2,7 @@
 
 import re
 import subprocess
+import os
 
 from verdict.types import ChangedFile
 
@@ -9,11 +10,14 @@ from verdict.types import ChangedFile
 def get_changed_files(diff_range: str = "HEAD", repo_root: str = ".") -> list[ChangedFile]:
     """Parse git diff output into structured ChangedFile records."""
     result = subprocess.run(
-        ["git", "diff", "--unified=0", diff_range],
+        ["git", "--no-pager", "diff", "--unified=0", diff_range],
         cwd=repo_root,
         capture_output=True,
         text=True,
         check=True,
+        stdin=subprocess.DEVNULL,
+        timeout=30,
+        env={**os.environ, "GIT_TERMINAL_PROMPT": "0", "GIT_OPTIONAL_LOCKS": "0"},
     )
     return _parse_unified_diff(result.stdout)
 
