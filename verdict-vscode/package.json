@@ -1,0 +1,136 @@
+{
+  "name": "verdict-vscode",
+  "displayName": "Verdict",
+  "description": "Verdict tab: bottom-panel UI for the verdict AI code auditor.",
+  "version": "0.2.0",
+  "publisher": "verdict",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "panel": [
+        {
+          "id": "verdict",
+          "title": "Verdict",
+          "icon": "media/verdict.svg"
+        }
+      ]
+    },
+    "views": {
+      "verdict": [
+        {
+          "id": "verdict.panel",
+          "name": "Findings",
+          "type": "webview"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "verdict.runAudit",
+        "title": "Verdict: Run Full Audit",
+        "icon": "$(play)"
+      },
+      {
+        "command": "verdict.runStatic",
+        "title": "Verdict: Run Static Audit",
+        "icon": "$(zap)"
+      },
+      {
+        "command": "verdict.refresh",
+        "title": "Verdict: Refresh",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "verdict.setDiffRange",
+        "title": "Verdict: Set Diff Range…",
+        "icon": "$(git-compare)"
+      },
+      {
+        "command": "verdict.goto",
+        "title": "Verdict: Go To Finding Location"
+      },
+      {
+        "command": "verdict.dismiss",
+        "title": "Verdict: Dismiss Finding"
+      },
+      {
+        "command": "verdict.resolve",
+        "title": "Verdict: Mark Finding Resolved"
+      },
+      {
+        "command": "verdict.fixWithBob",
+        "title": "Verdict: Fix Finding with Bob"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "verdict.runStatic",
+          "when": "view == verdict.panel",
+          "group": "navigation@1"
+        },
+        {
+          "command": "verdict.runAudit",
+          "when": "view == verdict.panel",
+          "group": "navigation@2"
+        },
+        {
+          "command": "verdict.refresh",
+          "when": "view == verdict.panel",
+          "group": "navigation@3"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Verdict",
+      "properties": {
+        "verdict.pythonPath": {
+          "type": "string",
+          "default": "",
+          "description": "Path to Python interpreter for running `python -m verdict.cli`. Leave empty to use the `verdict` console script on PATH."
+        },
+        "verdict.reportPath": {
+          "type": "string",
+          "default": "verdict-report.json",
+          "description": "Path to the verdict JSON report, relative to the workspace root."
+        },
+        "verdict.diffRange": {
+          "type": "string",
+          "default": "HEAD",
+          "description": "Git diff range passed to `verdict run`."
+        },
+        "verdict.groupBy": {
+          "type": "string",
+          "enum": ["type", "file", "severity"],
+          "default": "type",
+          "description": "How to group findings in the panel."
+        },
+        "verdict.sortBy": {
+          "type": "string",
+          "enum": ["severity", "file", "title"],
+          "default": "severity",
+          "description": "How to sort findings within a group."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p .",
+    "watch": "tsc -p . -w",
+    "vscode:prepublish": "tsc -p ."
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@types/vscode": "^1.85.0",
+    "typescript": "^5.3.3"
+  }
+}
