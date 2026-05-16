@@ -1,10 +1,11 @@
 """Tests for CLI module."""
 
+import time
 from unittest.mock import MagicMock, patch
 
 from click.testing import CliRunner
 
-from verdict.cli import cli
+from verdict.cli import cli, run_checks
 from verdict.types import Finding
 
 
@@ -217,6 +218,92 @@ def test_run_both_flags_raises_error():
     assert result.exit_code == 1
     assert "Error:" in result.output
     assert "both static_only and dynamic_only" in result.output
+
+
+def test_per_check_timeout_emits_finding_for_slow_check():
+    """A check that exceeds per_check_timeout produces a check_timed_out finding."""
+    slow_check = MagicMock()
+    slow_check.name = "slow_check"
+    slow_check.kind = "static"
+
+    def slow_run(*args, **kwargs):
+        time.sleep(1.5)
+        return []
+
+    slow_check.run.side_effect = slow_run
+
+    with patch("verdict.cli.discover_checks", return_value=[slow_check]):
+        with patch("verdict.cli.get_changed_files", return_value=[]):
+            with patch("verdict.cli.get_added_functions", return_value=[]):
+                scorecard = run_checks(".", per_check_timeout=0.5)
+
+    assert scorecard["summary"]["checks_timed_out"] == 1
+    timeout_findings = [f for f in scorecard["findings"] if f["kind"] == "check_timed_out"]
+    assert len(timeout_findings) == 1
+    assert "slow_check" in timeout_findings[0]["message"]
+
+
+def test_per_check_timeout_doesnt_block_other_checks():
+    """One slow check timing out must not prevent other checks from running."""
+    slow_check = MagicMock()
+    slow_check.name = "slow"
+    slow_check.kind = "static"
+
+    def slow_run(*args, **kwargs):
+        time.sleep(1.5)
+        return []
+
+    slow_check.run.side_effect = slow_run
+
+    fast_check = MagicMock()
+    fast_check.name = "fast"
+    fast_check.kind = "static"
+    fast_finding: Finding = {
+        "kind": "fast_finding",
+        "file": "f.py",
+        "line": 1,
+        "message": "fast check fired",
+        "confidence": 0.5,
+    }
+    fast_check.run.return_value = [fast_finding]
+
+    with patch("verdict.cli.discover_checks", return_value=[slow_check, fast_check]):
+        with patch("verdict.cli.get_changed_files", return_value=[]):
+            with patch("verdict.cli.get_added_functions", return_value=[]):
+                scorecard = run_checks(".", per_check_timeout=0.5)
+
+    assert scorecard["summary"]["checks_timed_out"] == 1
+    kinds = {f["kind"] for f in scorecard["findings"]}
+    assert "check_timed_out" in kinds
+    assert "fast_finding" in kinds
+
+
+def test_per_check_timeout_none_disables_timeout():
+    """per_check_timeout=None preserves the original no-timeout behavior."""
+    check = MagicMock()
+    check.name = "slow_but_finishes"
+    check.kind = "static"
+    finding: Finding = {
+        "kind": "real_finding",
+        "file": "f.py",
+        "line": 1,
+        "message": "found something",
+        "confidence": 0.5,
+    }
+
+    def slow_run(*args, **kwargs):
+        time.sleep(0.1)
+        return [finding]
+
+    check.run.side_effect = slow_run
+
+    with patch("verdict.cli.discover_checks", return_value=[check]):
+        with patch("verdict.cli.get_changed_files", return_value=[]):
+            with patch("verdict.cli.get_added_functions", return_value=[]):
+                scorecard = run_checks(".", per_check_timeout=None)
+
+    assert scorecard["summary"]["checks_timed_out"] == 0
+    assert any(f["kind"] == "real_finding" for f in scorecard["findings"])
 
 
 # Made with Bob

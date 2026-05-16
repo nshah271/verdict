@@ -45,6 +45,12 @@ def _error_scorecard(error_message: str) -> Scorecard:
     }
 
 
+# Per-check wall-clock budget for MCP calls. Bob's client times out at 60s,
+# so each check gets a bounded slice. Pre-warming Jedi (see main()) keeps
+# the typical case well under this.
+_MCP_PER_CHECK_TIMEOUT_SECONDS = 25.0
+
+
 def _run_checks_safe(
     repo_path: str, diff_range: str = "HEAD", static_only: bool = False
 ) -> Scorecard:
@@ -77,8 +83,14 @@ def _run_checks_safe(
         except ImportError as e:
             return _error_scorecard(f"Failed to import verdict CLI: {e}")
 
-        # Call the CLI function
-        scorecard = run_checks(repo_path=repo_path, diff_range=diff_range, static_only=static_only)
+        # Call the CLI function with a per-check timeout so one slow check
+        # can't blow past Bob's MCP client timeout.
+        scorecard = run_checks(
+            repo_path=repo_path,
+            diff_range=diff_range,
+            static_only=static_only,
+            per_check_timeout=_MCP_PER_CHECK_TIMEOUT_SECONDS,
+        )
         return scorecard
 
     except Exception as e:
@@ -99,7 +111,9 @@ async def check_diff(repo_path: str, diff_range: str = "HEAD") -> dict[str, Any]
     Returns:
         Scorecard dict with verdict, findings, and summary
     """
-    scorecard = _run_checks_safe(repo_path, diff_range, static_only=False)
+    scorecard = await asyncio.to_thread(
+        _run_checks_safe, repo_path, diff_range, static_only=False
+    )
     return dict(scorecard)
 
 
@@ -116,7 +130,9 @@ async def check_static(repo_path: str, diff_range: str = "HEAD") -> dict[str, An
     Returns:
         Scorecard dict with verdict, findings, and summary
     """
-    scorecard = _run_checks_safe(repo_path, diff_range, static_only=True)
+    scorecard = await asyncio.to_thread(
+        _run_checks_safe, repo_path, diff_range, static_only=True
+    )
     return dict(scorecard)
 
 
@@ -145,10 +161,10 @@ async def trace_test_run(repo_path: str, test_command: str = "pytest") -> dict[s
         except ImportError as e:
             return dict(_error_scorecard(f"Tracer not available: {e}"))
 
-        # Run the tracer (it will shell out to pytest internally)
+        # Run the tracer (it will shell out to pytest internally) on a
+        # worker thread so the asyncio event loop stays responsive.
         check = TraceCheck()
-        # Note: This assumes the Check protocol - adjust if actual interface differs
-        findings = check.run(repo_path, [])
+        findings = await asyncio.to_thread(check.run, repo_path, [])
 
         # Build scorecard from findings
         if not findings:
@@ -292,12 +308,31 @@ def create_server() -> Server:
     return server
 
 
+def _prewarm_jedi() -> None:
+    """Trigger Jedi's parser and import-resolver init before the first request.
+
+    Jedi lazy-builds its parser cache and stdlib index on the first call,
+    which can add 5-15s to whichever request happens to land first. Paying
+    that cost during server boot makes user-facing requests predictable.
+
+    Silent on any failure (jedi not installed, init error). The hallucinated_api
+    check already degrades to a no-op if Jedi is unavailable.
+    """
+    try:
+        import jedi
+
+        jedi.Script("import os\nos.path\n").infer(2, 7)
+    except Exception:
+        pass
+
+
 async def main() -> None:
     """Entry point for verdict-mcp console script.
 
     Starts the MCP server using stdio transport. This function runs indefinitely
     until the client closes the connection or the process is terminated.
     """
+    await asyncio.to_thread(_prewarm_jedi)
     server = create_server()
     async with stdio_server() as (read_stream, write_stream):
         await server.run(read_stream, write_stream, server.create_initialization_options())
