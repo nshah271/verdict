@@ -10,6 +10,7 @@ class DeadFunctionCheck:
     """Check for added functions that are never referenced anywhere in the repo."""
 
     name = "dead_function"
+    kind = "static"
 
     def run(
         self, diff_root: str, added_functions: list[AddedFunction]
@@ -189,5 +190,9 @@ def _is_in_all_or_init(name: str, file_path: str, repo_root: str, all_exports: d
             return True
 
     return False
+
+
+# Export check instance for CLI auto-discovery
+check = DeadFunctionCheck()
 
 # Made with Bob

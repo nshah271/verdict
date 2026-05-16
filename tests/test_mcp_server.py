@@ -134,20 +134,41 @@ async def test_check_static_with_custom_diff_range(mock_pass_scorecard):
         mock_run.assert_called_once_with("/test/repo", "develop..HEAD", static_only=True)
 
 
-@pytest.mark.skip(reason="Requires P1.1 tracer implementation")
 @pytest.mark.asyncio
-async def test_trace_test_run_success(mock_scorecard):
-    """Test trace_test_run executes test command."""
-    # This test will pass once P1.1 (execution tracer) is implemented
-    pass
+async def test_trace_test_run_success(tmp_path):
+    """Trace check returns high-confidence findings, scorecard verdict is LIED."""
+    mock_check_instance = MagicMock()
+    mock_check_instance.run.return_value = [
+        {
+            "kind": "never_executed",
+            "file": "verdict/foo.py",
+            "line": 10,
+            "message": "foo() defined but never called during test run",
+            "confidence": 0.85,
+        }
+    ]
+
+    with patch("verdict.checks.trace.TraceCheck", return_value=mock_check_instance):
+        result = await trace_test_run(repo_path=str(tmp_path), test_command="pytest")
+
+    assert result["verdict"] == "LIED"
+    assert len(result["findings"]) == 1
+    assert result["findings"][0]["kind"] == "never_executed"
+    assert result["summary"]["total_findings"] == 1
 
 
-@pytest.mark.skip(reason="Requires P1.1 tracer implementation")
 @pytest.mark.asyncio
-async def test_trace_test_run_no_findings():
-    """Test trace_test_run returns PASS when no findings."""
-    # This test will pass once P1.1 (execution tracer) is implemented
-    pass
+async def test_trace_test_run_no_findings(tmp_path):
+    """Trace check returns empty findings list, scorecard verdict is PASS."""
+    mock_check_instance = MagicMock()
+    mock_check_instance.run.return_value = []
+
+    with patch("verdict.checks.trace.TraceCheck", return_value=mock_check_instance):
+        result = await trace_test_run(repo_path=str(tmp_path), test_command="pytest")
+
+    assert result["verdict"] == "PASS"
+    assert result["findings"] == []
+    assert result["summary"]["total_findings"] == 0
 
 
 @pytest.mark.asyncio
@@ -287,12 +308,18 @@ async def test_check_diff_error_handling():
         assert result["findings"][0]["kind"] == "verdict_internal_error"
 
 
-@pytest.mark.skip(reason="Requires P1.1 tracer implementation")
 @pytest.mark.asyncio
-async def test_trace_test_run_exception_handling():
-    """Test trace_test_run handles exceptions gracefully."""
-    # This test will pass once P1.1 (execution tracer) is implemented
-    pass
+async def test_trace_test_run_exception_handling(tmp_path):
+    """Trace check raising an exception is caught, scorecard is SUSPICIOUS."""
+    mock_check_instance = MagicMock()
+    mock_check_instance.run.side_effect = RuntimeError("tracer crashed")
+
+    with patch("verdict.checks.trace.TraceCheck", return_value=mock_check_instance):
+        result = await trace_test_run(repo_path=str(tmp_path), test_command="pytest")
+
+    assert result["verdict"] == "SUSPICIOUS"
+    assert result["findings"][0]["kind"] == "verdict_internal_error"
+    assert "tracer crashed" in result["findings"][0]["message"]
 
 
 # Made with Bob

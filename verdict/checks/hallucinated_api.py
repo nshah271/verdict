@@ -95,8 +95,9 @@ def _should_suppress(receiver_names: list, attr_name: str) -> bool:
     if attr_name.startswith("__"):
         return True
 
-    # Check for suppressed type names
-    suppressed_types = {"Any", "object", "NoneType"}
+    # Mock variants use __getattr__ to manufacture attributes on demand, so a
+    # static "attribute does not exist" against them is always a false positive.
+    suppressed_types = {"Any", "object", "NoneType", "Mock", "MagicMock", "AsyncMock", "NonCallableMock", "NonCallableMagicMock"}  # noqa: E501
     for name in receiver_names:
         try:
             type_name = name.name

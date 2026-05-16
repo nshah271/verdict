@@ -22,7 +22,11 @@ runs:
     - name: Install verdict-ai
       shell: bash
       run: |
-        pip install "${{ github.action_path }}"
+        # Editable install so the package's file paths point at the workspace
+        # source. The trace and coverage_delta checks match diff-derived line
+        # numbers against runtime co_filename, which only aligns when the
+        # installed package and the diff source are the same files on disk.
+        pip install -e "${{ github.action_path }}"
 
     - name: Run verdict audit
       shell: bash
