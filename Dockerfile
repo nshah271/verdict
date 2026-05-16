@@ -6,8 +6,11 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Install verdict-ai
-RUN pip install --no-cache-dir verdict-ai
+# Copy and install verdict from source (the PyPI package named verdict-ai
+# is unrelated to this project; do not install from PyPI).
+WORKDIR /app
+COPY . /app
+RUN pip install --no-cache-dir .
 
 # Set entrypoint
 ENTRYPOINT ["verdict", "run"]

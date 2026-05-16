@@ -14,7 +14,7 @@ inputs:
   diff-range:
     description: 'Git diff range to audit'
     required: false
-    default: 'HEAD'
+    default: 'origin/main...HEAD'
 
 runs:
   using: 'composite'
@@ -22,21 +22,17 @@ runs:
     - name: Install verdict-ai
       shell: bash
       run: |
-        pip install verdict-ai
-    
+        pip install "${{ github.action_path }}"
+
     - name: Run verdict audit
       shell: bash
       run: |
-        ARGS="--fail-on ${{ inputs.fail-on }}"
-        
+        ARGS="--fail-on ${{ inputs.fail-on }} --diff-range ${{ inputs.diff-range }}"
+
         if [ "${{ inputs.static-only }}" = "true" ]; then
           ARGS="$ARGS --static-only"
         fi
-        
-        if [ "${{ inputs.diff-range }}" != "HEAD" ]; then
-          ARGS="$ARGS --diff-range ${{ inputs.diff-range }}"
-        fi
-        
+
         verdict run $ARGS
 
 branding:
