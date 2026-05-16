@@ -15,29 +15,6 @@ from verdict.diff import get_changed_files
 from verdict.types import AddedFunction, Finding
 
 
-def _executable_lines(file_abs_path: str) -> set[int]:
-    """Return line numbers in a file that contain executable code.
-
-    A line is non-executable if it is blank or starts with `#` after stripping
-    leading whitespace. Without this filter, comment-only and blank diff lines
-    would inflate the denominator of the coverage percentage and cause
-    spurious low-coverage findings on changes that add only documentation.
-    """
-    try:
-        with open(file_abs_path, encoding="utf-8") as f:
-            lines = f.readlines()
-    except OSError:
-        return set()
-
-    executable: set[int] = set()
-    for i, line in enumerate(lines, start=1):
-        stripped = line.strip()
-        if not stripped or stripped.startswith("#"):
-            continue
-        executable.add(i)
-    return executable
-
-
 class CoverageDeltaCheck:
     """Check for newly added lines with low test coverage."""
 
@@ -78,15 +55,9 @@ class CoverageDeltaCheck:
             if "tests/" in file_path or Path(file_path).name.startswith("test_"):
                 continue
 
-            # Build absolute path and filter added lines down to executable
-            # ones only (blank and comment-only diff lines should not count
-            # against coverage).
+            # Build absolute path and add to targets
             abs_path = os.path.realpath(Path(diff_root) / file_path)
-            exec_lines = _executable_lines(abs_path)
-            executable_added = [line for line in added_lines if line in exec_lines]
-            if not executable_added:
-                continue
-            targets[abs_path] = executable_added
+            targets[abs_path] = added_lines
 
         # Early exit if no targets
         if not targets:
