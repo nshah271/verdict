@@ -41,6 +41,9 @@ coverage.xml
 # verdict's own output (don't commit reports generated during dev)
 verdict-report.json
 
+# uv lockfile (project uses pip, not uv; stray artifact)
+uv.lock
+
 # Editor / OS
 .vscode/
 .idea/
