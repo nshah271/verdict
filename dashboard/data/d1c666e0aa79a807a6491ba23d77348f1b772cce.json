@@ -1,0 +1,21 @@
+{
+  "findings": [
+    {
+      "confidence": 0.9,
+      "file": "verdict/cli.py",
+      "kind": "dead_function",
+      "line": 266,
+      "message": "bob_mode_install() is never referenced in the repo"
+    }
+  ],
+  "summary": {
+    "checks_failed": 0,
+    "checks_run": 5,
+    "checks_timed_out": 0,
+    "diff_range": "71bb5dcc75e465d551457f46c9f66b88d97a5675..d1c666e0aa79a807a6491ba23d77348f1b772cce",
+    "dynamic_only": false,
+    "static_only": true,
+    "total_findings": 1
+  },
+  "verdict": "LIED"
+}

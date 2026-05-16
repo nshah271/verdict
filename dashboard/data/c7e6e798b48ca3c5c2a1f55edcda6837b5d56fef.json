@@ -1,0 +1,70 @@
+{
+  "findings": [
+    {
+      "confidence": 0.9,
+      "file": "tests/test_hallucinated_api.py",
+      "kind": "vacuous_test",
+      "line": 14,
+      "message": "test has no assertions"
+    },
+    {
+      "confidence": 0.9,
+      "file": "tests/test_hallucinated_api.py",
+      "kind": "vacuous_test",
+      "line": 32,
+      "message": "test has no assertions"
+    },
+    {
+      "confidence": 0.85,
+      "file": "verdict/checks/hallucinated_api.py",
+      "kind": "hallucinated_api",
+      "line": 61,
+      "message": "no attribute 'attr' on AST"
+    },
+    {
+      "confidence": 0.85,
+      "file": "verdict/checks/hallucinated_api.py",
+      "kind": "hallucinated_api",
+      "line": 65,
+      "message": "no attribute 'lineno' on AST"
+    },
+    {
+      "confidence": 0.85,
+      "file": "verdict/checks/hallucinated_api.py",
+      "kind": "hallucinated_api",
+      "line": 69,
+      "message": "no attribute 'col_offset' on AST"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/test_hallucinated_api.py",
+      "kind": "vacuous_test",
+      "line": 14,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/test_hallucinated_api.py",
+      "kind": "vacuous_test",
+      "line": 32,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/test_hallucinated_api.py",
+      "kind": "vacuous_test",
+      "line": 40,
+      "message": "test does not call any new function"
+    }
+  ],
+  "summary": {
+    "checks_failed": 0,
+    "checks_run": 5,
+    "checks_timed_out": 0,
+    "diff_range": "7a4ea94b8444a946eb4939731b76217f805e6978..c7e6e798b48ca3c5c2a1f55edcda6837b5d56fef",
+    "dynamic_only": false,
+    "static_only": true,
+    "total_findings": 8
+  },
+  "verdict": "LIED"
+}

@@ -1,0 +1,287 @@
+{
+  "findings": [
+    {
+      "confidence": 0.9,
+      "file": "verdict/cli.py",
+      "kind": "dead_function",
+      "line": 172,
+      "message": "mcp_install() is never referenced in the repo"
+    },
+    {
+      "confidence": 0.9,
+      "file": "verdict/diff.py",
+      "kind": "dead_function",
+      "line": 9,
+      "message": "get_changed_files() is never referenced in the repo"
+    },
+    {
+      "confidence": 0.9,
+      "file": "tests/fixtures/sample_module.py",
+      "kind": "vacuous_test",
+      "line": 8,
+      "message": "test has no assertions"
+    },
+    {
+      "confidence": 0.9,
+      "file": "tests/fixtures/sample_module.py",
+      "kind": "vacuous_test",
+      "line": 21,
+      "message": "test has no assertions"
+    },
+    {
+      "confidence": 0.9,
+      "file": "tests/fixtures/sample_module.py",
+      "kind": "vacuous_test",
+      "line": 28,
+      "message": "test has no assertions"
+    },
+    {
+      "confidence": 0.9,
+      "file": "tests/fixtures/sample_module.py",
+      "kind": "vacuous_test",
+      "line": 51,
+      "message": "test has no assertions"
+    },
+    {
+      "confidence": 0.9,
+      "file": "tests/fixtures/sample_module.py",
+      "kind": "vacuous_test",
+      "line": 55,
+      "message": "test has no assertions"
+    },
+    {
+      "confidence": 0.9,
+      "file": "tests/fixtures/sample_module.py",
+      "kind": "vacuous_test",
+      "line": 64,
+      "message": "test has no assertions"
+    },
+    {
+      "confidence": 0.9,
+      "file": "tests/fixtures/sample_module.py",
+      "kind": "vacuous_test",
+      "line": 76,
+      "message": "test has no assertions"
+    },
+    {
+      "confidence": 0.9,
+      "file": "tests/fixtures/sample_module.py",
+      "kind": "vacuous_test",
+      "line": 91,
+      "message": "test has no assertions"
+    },
+    {
+      "confidence": 0.9,
+      "file": "tests/test_mcp_server.py",
+      "kind": "vacuous_test",
+      "line": 24,
+      "message": "test has no assertions"
+    },
+    {
+      "confidence": 0.9,
+      "file": "tests/test_mcp_server.py",
+      "kind": "vacuous_test",
+      "line": 45,
+      "message": "test has no assertions"
+    },
+    {
+      "confidence": 0.85,
+      "file": "tests/test_mcp_server.py",
+      "kind": "hallucinated_api",
+      "line": 188,
+      "message": "no attribute 'write_text' on str"
+    },
+    {
+      "confidence": 0.85,
+      "file": "tests/test_mcp_server.py",
+      "kind": "hallucinated_api",
+      "line": 208,
+      "message": "no attribute 'mkdir' on str"
+    },
+    {
+      "confidence": 0.85,
+      "file": "tests/test_mcp_server.py",
+      "kind": "hallucinated_api",
+      "line": 223,
+      "message": "no attribute 'mkdir' on str"
+    },
+    {
+      "confidence": 0.85,
+      "file": "tests/test_mcp_server.py",
+      "kind": "hallucinated_api",
+      "line": 239,
+      "message": "no attribute 'mkdir' on str"
+    },
+    {
+      "confidence": 0.85,
+      "file": "tests/test_mcp_server.py",
+      "kind": "hallucinated_api",
+      "line": 257,
+      "message": "no attribute 'mkdir' on str"
+    },
+    {
+      "confidence": 0.85,
+      "file": "verdict/ast_utils.py",
+      "kind": "hallucinated_api",
+      "line": 51,
+      "message": "no attribute 'lineno' on AST"
+    },
+    {
+      "confidence": 0.85,
+      "file": "verdict/ast_utils.py",
+      "kind": "hallucinated_api",
+      "line": 56,
+      "message": "no attribute 'name' on AST"
+    },
+    {
+      "confidence": 0.85,
+      "file": "verdict/ast_utils.py",
+      "kind": "hallucinated_api",
+      "line": 59,
+      "message": "no attribute 'decorator_list' on AST"
+    },
+    {
+      "confidence": 0.85,
+      "file": "verdict/ast_utils.py",
+      "kind": "hallucinated_api",
+      "line": 62,
+      "message": "no attribute 'end_lineno' on AST"
+    },
+    {
+      "confidence": 0.85,
+      "file": "verdict/ast_utils.py",
+      "kind": "hallucinated_api",
+      "line": 62,
+      "message": "no attribute 'lineno' on AST"
+    },
+    {
+      "confidence": 0.85,
+      "file": "verdict/ast_utils.py",
+      "kind": "hallucinated_api",
+      "line": 62,
+      "message": "no attribute 'end_lineno' on AST"
+    },
+    {
+      "confidence": 0.85,
+      "file": "verdict/ast_utils.py",
+      "kind": "hallucinated_api",
+      "line": 67,
+      "message": "no attribute 'name' on AST"
+    },
+    {
+      "confidence": 0.85,
+      "file": "verdict/ast_utils.py",
+      "kind": "hallucinated_api",
+      "line": 68,
+      "message": "no attribute 'lineno' on AST"
+    },
+    {
+      "confidence": 0.85,
+      "file": "verdict/ast_utils.py",
+      "kind": "hallucinated_api",
+      "line": 96,
+      "message": "no attribute 'attr' on expr"
+    },
+    {
+      "confidence": 0.85,
+      "file": "verdict/ast_utils.py",
+      "kind": "hallucinated_api",
+      "line": 97,
+      "message": "no attribute 'value' on expr"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/fixtures/sample_module.py",
+      "kind": "vacuous_test",
+      "line": 8,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/fixtures/sample_module.py",
+      "kind": "vacuous_test",
+      "line": 21,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/fixtures/sample_module.py",
+      "kind": "vacuous_test",
+      "line": 28,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/fixtures/sample_module.py",
+      "kind": "vacuous_test",
+      "line": 36,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/fixtures/sample_module.py",
+      "kind": "vacuous_test",
+      "line": 42,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/fixtures/sample_module.py",
+      "kind": "vacuous_test",
+      "line": 51,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/fixtures/sample_module.py",
+      "kind": "vacuous_test",
+      "line": 55,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/fixtures/sample_module.py",
+      "kind": "vacuous_test",
+      "line": 64,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/fixtures/sample_module.py",
+      "kind": "vacuous_test",
+      "line": 76,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/fixtures/sample_module.py",
+      "kind": "vacuous_test",
+      "line": 91,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/test_mcp_server.py",
+      "kind": "vacuous_test",
+      "line": 24,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/test_mcp_server.py",
+      "kind": "vacuous_test",
+      "line": 45,
+      "message": "test does not call any new function"
+    }
+  ],
+  "summary": {
+    "checks_failed": 0,
+    "checks_run": 5,
+    "checks_timed_out": 0,
+    "diff_range": "7b395e8ddfde2af6fd399a5c047b8b350a05cc65..c29eaceef03d08e2fe7b96fe366324454a0abb98",
+    "dynamic_only": false,
+    "static_only": true,
+    "total_findings": 39
+  },
+  "verdict": "LIED"
+}

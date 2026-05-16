@@ -1,0 +1,245 @@
+{
+  "findings": [
+    {
+      "confidence": 1.0,
+      "file": "tests/fixtures/suppressed_exc_sample.py",
+      "kind": "vacuous_test",
+      "line": 146,
+      "message": "test body is empty"
+    },
+    {
+      "confidence": 1.0,
+      "file": "tests/fixtures/suppressed_exc_sample.py",
+      "kind": "vacuous_test",
+      "line": 150,
+      "message": "test body is empty"
+    },
+    {
+      "confidence": 1.0,
+      "file": "tests/fixtures/suppressed_exc_sample.py",
+      "kind": "vacuous_test",
+      "line": 154,
+      "message": "test body is empty"
+    },
+    {
+      "confidence": 1.0,
+      "file": "tests/fixtures/suppressed_exc_sample.py",
+      "kind": "vacuous_test",
+      "line": 158,
+      "message": "test body is empty"
+    },
+    {
+      "confidence": 0.9,
+      "file": "tests/fixtures/suppressed_exc_sample.py",
+      "kind": "vacuous_test",
+      "line": 8,
+      "message": "test has no assertions"
+    },
+    {
+      "confidence": 0.9,
+      "file": "tests/fixtures/suppressed_exc_sample.py",
+      "kind": "vacuous_test",
+      "line": 16,
+      "message": "test has no assertions"
+    },
+    {
+      "confidence": 0.9,
+      "file": "tests/fixtures/suppressed_exc_sample.py",
+      "kind": "vacuous_test",
+      "line": 24,
+      "message": "test has no assertions"
+    },
+    {
+      "confidence": 0.9,
+      "file": "tests/fixtures/suppressed_exc_sample.py",
+      "kind": "vacuous_test",
+      "line": 33,
+      "message": "test has no assertions"
+    },
+    {
+      "confidence": 0.9,
+      "file": "tests/fixtures/suppressed_exc_sample.py",
+      "kind": "vacuous_test",
+      "line": 42,
+      "message": "test has no assertions"
+    },
+    {
+      "confidence": 0.9,
+      "file": "tests/fixtures/suppressed_exc_sample.py",
+      "kind": "vacuous_test",
+      "line": 52,
+      "message": "test has no assertions"
+    },
+    {
+      "confidence": 0.9,
+      "file": "tests/fixtures/suppressed_exc_sample.py",
+      "kind": "vacuous_test",
+      "line": 60,
+      "message": "test has no assertions"
+    },
+    {
+      "confidence": 0.9,
+      "file": "tests/fixtures/suppressed_exc_sample.py",
+      "kind": "vacuous_test",
+      "line": 68,
+      "message": "test has no assertions"
+    },
+    {
+      "confidence": 0.9,
+      "file": "tests/fixtures/suppressed_exc_sample.py",
+      "kind": "vacuous_test",
+      "line": 78,
+      "message": "test has no assertions"
+    },
+    {
+      "confidence": 0.9,
+      "file": "tests/fixtures/suppressed_exc_sample.py",
+      "kind": "vacuous_test",
+      "line": 83,
+      "message": "test has no assertions"
+    },
+    {
+      "confidence": 0.9,
+      "file": "tests/fixtures/suppressed_exc_sample.py",
+      "kind": "vacuous_test",
+      "line": 103,
+      "message": "test has no assertions"
+    },
+    {
+      "confidence": 0.9,
+      "file": "tests/fixtures/suppressed_exc_sample.py",
+      "kind": "vacuous_test",
+      "line": 115,
+      "message": "test has no assertions"
+    },
+    {
+      "confidence": 0.9,
+      "file": "tests/fixtures/suppressed_exc_sample.py",
+      "kind": "vacuous_test",
+      "line": 125,
+      "message": "test has no assertions"
+    },
+    {
+      "confidence": 0.9,
+      "file": "tests/fixtures/suppressed_exc_sample.py",
+      "kind": "vacuous_test",
+      "line": 146,
+      "message": "test has no assertions"
+    },
+    {
+      "confidence": 0.9,
+      "file": "tests/fixtures/suppressed_exc_sample.py",
+      "kind": "vacuous_test",
+      "line": 150,
+      "message": "test has no assertions"
+    },
+    {
+      "confidence": 0.9,
+      "file": "tests/fixtures/suppressed_exc_sample.py",
+      "kind": "vacuous_test",
+      "line": 154,
+      "message": "test has no assertions"
+    },
+    {
+      "confidence": 0.9,
+      "file": "tests/fixtures/suppressed_exc_sample.py",
+      "kind": "vacuous_test",
+      "line": 158,
+      "message": "test has no assertions"
+    },
+    {
+      "confidence": 0.9,
+      "file": "tests/test_suppressed_exc.py",
+      "kind": "vacuous_test",
+      "line": 10,
+      "message": "test has no assertions"
+    },
+    {
+      "confidence": 0.85,
+      "file": "verdict/checks/suppressed_exc.py",
+      "kind": "hallucinated_api",
+      "line": 76,
+      "message": "no attribute 'lineno' on AST"
+    },
+    {
+      "confidence": 0.85,
+      "file": "verdict/checks/suppressed_exc.py",
+      "kind": "hallucinated_api",
+      "line": 83,
+      "message": "no attribute 'handlers' on AST"
+    },
+    {
+      "confidence": 0.85,
+      "file": "verdict/checks/suppressed_exc.py",
+      "kind": "hallucinated_api",
+      "line": 189,
+      "message": "no attribute 'attr' on expr"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/fixtures/suppressed_exc_sample.py",
+      "kind": "vacuous_test",
+      "line": 24,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/fixtures/suppressed_exc_sample.py",
+      "kind": "vacuous_test",
+      "line": 78,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/fixtures/suppressed_exc_sample.py",
+      "kind": "vacuous_test",
+      "line": 146,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/fixtures/suppressed_exc_sample.py",
+      "kind": "vacuous_test",
+      "line": 150,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/fixtures/suppressed_exc_sample.py",
+      "kind": "vacuous_test",
+      "line": 154,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/fixtures/suppressed_exc_sample.py",
+      "kind": "vacuous_test",
+      "line": 158,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/test_suppressed_exc.py",
+      "kind": "vacuous_test",
+      "line": 10,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/test_suppressed_exc.py",
+      "kind": "vacuous_test",
+      "line": 285,
+      "message": "test does not call any new function"
+    }
+  ],
+  "summary": {
+    "checks_failed": 0,
+    "checks_run": 5,
+    "checks_timed_out": 0,
+    "diff_range": "3181095b0c6829b1231336c25c3b8ca842cfa880..1bf92b18aef9ba4e1e2ee54a4e185d39d8c45f7c",
+    "dynamic_only": false,
+    "static_only": true,
+    "total_findings": 33
+  },
+  "verdict": "LIED"
+}

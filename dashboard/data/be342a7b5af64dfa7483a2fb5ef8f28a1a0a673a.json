@@ -1,0 +1,56 @@
+{
+  "findings": [
+    {
+      "confidence": 0.9,
+      "file": "tests/test_vacuous_tests.py",
+      "kind": "vacuous_test",
+      "line": 14,
+      "message": "test has no assertions"
+    },
+    {
+      "confidence": 0.9,
+      "file": "tests/test_vacuous_tests.py",
+      "kind": "vacuous_test",
+      "line": 31,
+      "message": "test has no assertions"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/test_vacuous_tests.py",
+      "kind": "vacuous_test",
+      "line": 14,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/test_vacuous_tests.py",
+      "kind": "vacuous_test",
+      "line": 31,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/test_vacuous_tests.py",
+      "kind": "vacuous_test",
+      "line": 37,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/test_vacuous_tests.py",
+      "kind": "vacuous_test",
+      "line": 191,
+      "message": "test does not call any new function"
+    }
+  ],
+  "summary": {
+    "checks_failed": 0,
+    "checks_run": 5,
+    "checks_timed_out": 0,
+    "diff_range": "7f2104c3a40620a7c4c43da3db12f23308a5fcc1..be342a7b5af64dfa7483a2fb5ef8f28a1a0a673a",
+    "dynamic_only": false,
+    "static_only": true,
+    "total_findings": 6
+  },
+  "verdict": "LIED"
+}

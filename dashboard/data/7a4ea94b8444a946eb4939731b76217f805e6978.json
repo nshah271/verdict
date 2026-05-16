@@ -1,0 +1,28 @@
+{
+  "findings": [
+    {
+      "confidence": 0.9,
+      "file": "verdict/_coverage_plugin.py",
+      "kind": "dead_function",
+      "line": 58,
+      "message": "pytest_sessionstart() is never referenced in the repo"
+    },
+    {
+      "confidence": 0.9,
+      "file": "verdict/_coverage_plugin.py",
+      "kind": "dead_function",
+      "line": 70,
+      "message": "pytest_sessionfinish() is never referenced in the repo"
+    }
+  ],
+  "summary": {
+    "checks_failed": 0,
+    "checks_run": 5,
+    "checks_timed_out": 0,
+    "diff_range": "ca0d0b2dac13febee5abca607ecc14c22b3c7107..7a4ea94b8444a946eb4939731b76217f805e6978",
+    "dynamic_only": false,
+    "static_only": true,
+    "total_findings": 2
+  },
+  "verdict": "LIED"
+}

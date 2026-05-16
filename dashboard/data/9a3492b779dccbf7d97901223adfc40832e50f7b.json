@@ -1,0 +1,126 @@
+{
+  "findings": [
+    {
+      "confidence": 0.9,
+      "file": "verdict/cli.py",
+      "kind": "hallucinated_api",
+      "line": 266,
+      "message": "no attribute 'kind' on Check"
+    },
+    {
+      "confidence": 0.9,
+      "file": "verdict/cli.py",
+      "kind": "hallucinated_api",
+      "line": 268,
+      "message": "no attribute 'kind' on Check"
+    },
+    {
+      "confidence": 0.85,
+      "file": "verdict/cli.py",
+      "kind": "hallucinated_api",
+      "line": 219,
+      "message": "no attribute 'check' on ModuleType"
+    },
+    {
+      "confidence": 0.85,
+      "file": "verdict/cli.py",
+      "kind": "hallucinated_api",
+      "line": 223,
+      "message": "no attribute 'stderr' on sys"
+    },
+    {
+      "confidence": 0.85,
+      "file": "verdict/cli.py",
+      "kind": "hallucinated_api",
+      "line": 228,
+      "message": "no attribute 'stderr' on sys"
+    },
+    {
+      "confidence": 0.85,
+      "file": "verdict/cli.py",
+      "kind": "hallucinated_api",
+      "line": 283,
+      "message": "no attribute 'stderr' on sys"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/test_cli.py",
+      "kind": "vacuous_test",
+      "line": 11,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/test_cli.py",
+      "kind": "vacuous_test",
+      "line": 24,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/test_cli.py",
+      "kind": "vacuous_test",
+      "line": 50,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/test_cli.py",
+      "kind": "vacuous_test",
+      "line": 63,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/test_cli.py",
+      "kind": "vacuous_test",
+      "line": 89,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/test_cli.py",
+      "kind": "vacuous_test",
+      "line": 115,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/test_cli.py",
+      "kind": "vacuous_test",
+      "line": 133,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/test_cli.py",
+      "kind": "vacuous_test",
+      "line": 154,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/test_cli.py",
+      "kind": "vacuous_test",
+      "line": 181,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/test_cli.py",
+      "kind": "vacuous_test",
+      "line": 208,
+      "message": "test does not call any new function"
+    }
+  ],
+  "summary": {
+    "checks_failed": 0,
+    "checks_run": 5,
+    "checks_timed_out": 0,
+    "diff_range": "d1c666e0aa79a807a6491ba23d77348f1b772cce..9a3492b779dccbf7d97901223adfc40832e50f7b",
+    "dynamic_only": false,
+    "static_only": true,
+    "total_findings": 16
+  },
+  "verdict": "LIED"
+}

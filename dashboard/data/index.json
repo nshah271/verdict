@@ -1,0 +1,356 @@
+{
+  "branch": "main",
+  "commits": [
+    {
+      "author": "AlexieLinardatos",
+      "parent": "7b395e8ddfde2af6fd399a5c047b8b350a05cc65",
+      "scorecard_file": "c29eaceef03d08e2fe7b96fe366324454a0abb98.json",
+      "sha": "c29eaceef03d08e2fe7b96fe366324454a0abb98",
+      "short_sha": "c29eace",
+      "subject": "merge main: resolve .gitignore conflict",
+      "timestamp": "2026-05-15T15:26:31-04:00",
+      "top_finding": {
+        "confidence": 0.9,
+        "kind": "dead_function",
+        "message": "mcp_install() is never referenced in the repo"
+      },
+      "total_findings": 39,
+      "verdict": "LIED"
+    },
+    {
+      "author": "Alexie Linardatos",
+      "parent": "c29eaceef03d08e2fe7b96fe366324454a0abb98",
+      "scorecard_file": "f748bd60f16e5e1bf2d106881422de1214c774f0.json",
+      "sha": "f748bd60f16e5e1bf2d106881422de1214c774f0",
+      "short_sha": "f748bd6",
+      "subject": "Merge pull request #2 from nshah271/feat/p0.3-vacuous-tests",
+      "timestamp": "2026-05-15T15:30:14-04:00",
+      "top_finding": {
+        "confidence": 0.85,
+        "kind": "hallucinated_api",
+        "message": "no attribute 'value' on stmt"
+      },
+      "total_findings": 2,
+      "verdict": "LIED"
+    },
+    {
+      "author": "Ben Leung",
+      "parent": "f748bd60f16e5e1bf2d106881422de1214c774f0",
+      "scorecard_file": "71bb5dcc75e465d551457f46c9f66b88d97a5675.json",
+      "sha": "71bb5dcc75e465d551457f46c9f66b88d97a5675",
+      "short_sha": "71bb5dc",
+      "subject": "Merge pull request #3 from nshah271/feat/p1.2-mcp-server",
+      "timestamp": "2026-05-15T18:45:14-04:00",
+      "top_finding": {
+        "confidence": 0.9,
+        "kind": "dead_function",
+        "message": "entrypoint() is never referenced in the repo"
+      },
+      "total_findings": 1,
+      "verdict": "LIED"
+    },
+    {
+      "author": "Ben Leung",
+      "parent": "71bb5dcc75e465d551457f46c9f66b88d97a5675",
+      "scorecard_file": "d1c666e0aa79a807a6491ba23d77348f1b772cce.json",
+      "sha": "d1c666e0aa79a807a6491ba23d77348f1b772cce",
+      "short_sha": "d1c666e",
+      "subject": "Merge pull request #4 from nshah271/feat/p1.2-mcp-server",
+      "timestamp": "2026-05-15T18:48:16-04:00",
+      "top_finding": {
+        "confidence": 0.9,
+        "kind": "dead_function",
+        "message": "bob_mode_install() is never referenced in the repo"
+      },
+      "total_findings": 1,
+      "verdict": "LIED"
+    },
+    {
+      "author": "Neel Samirkumar Shah",
+      "parent": "d1c666e0aa79a807a6491ba23d77348f1b772cce",
+      "scorecard_file": "9a3492b779dccbf7d97901223adfc40832e50f7b.json",
+      "sha": "9a3492b779dccbf7d97901223adfc40832e50f7b",
+      "short_sha": "9a3492b",
+      "subject": "[P0.4] cli and scorecard plumbing (#5)",
+      "timestamp": "2026-05-15T22:05:42-04:00",
+      "top_finding": {
+        "confidence": 0.9,
+        "kind": "hallucinated_api",
+        "message": "no attribute 'kind' on Check"
+      },
+      "total_findings": 16,
+      "verdict": "LIED"
+    },
+    {
+      "author": "neelshah27",
+      "parent": "9a3492b779dccbf7d97901223adfc40832e50f7b",
+      "scorecard_file": "42275f5a29f601d7e001cd4c525723718a416dd5.json",
+      "sha": "42275f5a29f601d7e001cd4c525723718a416dd5",
+      "short_sha": "42275f5",
+      "subject": "scrub bob_sessions: drop a couple of stray ai-tool name mentions from spec excerpts",
+      "timestamp": "2026-05-15T22:09:35-04:00",
+      "top_finding": null,
+      "total_findings": 0,
+      "verdict": "PASS"
+    },
+    {
+      "author": "Alexie Linardatos",
+      "parent": "42275f5a29f601d7e001cd4c525723718a416dd5",
+      "scorecard_file": "7f2104c3a40620a7c4c43da3db12f23308a5fcc1.json",
+      "sha": "7f2104c3a40620a7c4c43da3db12f23308a5fcc1",
+      "short_sha": "7f2104c",
+      "subject": "Merge pull request #6 from nshah271/feat/p2.3-phantom-file-detection",
+      "timestamp": "2026-05-15T22:26:36-04:00",
+      "top_finding": null,
+      "total_findings": 0,
+      "verdict": "PASS"
+    },
+    {
+      "author": "Neel Samirkumar Shah",
+      "parent": "7f2104c3a40620a7c4c43da3db12f23308a5fcc1",
+      "scorecard_file": "be342a7b5af64dfa7483a2fb5ef8f28a1a0a673a.json",
+      "sha": "be342a7b5af64dfa7483a2fb5ef8f28a1a0a673a",
+      "short_sha": "be342a7",
+      "subject": "tests for alexie's vacuous_tests check, covers all four heuristics + edge cases (#7)",
+      "timestamp": "2026-05-15T22:28:57-04:00",
+      "top_finding": {
+        "confidence": 0.9,
+        "kind": "vacuous_test",
+        "message": "test has no assertions"
+      },
+      "total_findings": 6,
+      "verdict": "LIED"
+    },
+    {
+      "author": "AlexieLinardatos",
+      "parent": "be342a7b5af64dfa7483a2fb5ef8f28a1a0a673a",
+      "scorecard_file": "aee42787919dac5089958af1177eb48faf763d31.json",
+      "sha": "aee42787919dac5089958af1177eb48faf763d31",
+      "short_sha": "aee4278",
+      "subject": "added p2.3",
+      "timestamp": "2026-05-15T22:33:40-04:00",
+      "top_finding": null,
+      "total_findings": 0,
+      "verdict": "PASS"
+    },
+    {
+      "author": "Neel Samirkumar Shah",
+      "parent": "aee42787919dac5089958af1177eb48faf763d31",
+      "scorecard_file": "904ecade30f41316ade8265a2fc847cb3fa249c2.json",
+      "sha": "904ecade30f41316ade8265a2fc847cb3fa249c2",
+      "short_sha": "904ecad",
+      "subject": "add dynamic check to verdict (#8)",
+      "timestamp": "2026-05-15T23:31:12-04:00",
+      "top_finding": {
+        "confidence": 0.9,
+        "kind": "dead_function",
+        "message": "pytest_sessionstart() is never referenced in the repo"
+      },
+      "total_findings": 7,
+      "verdict": "LIED"
+    },
+    {
+      "author": "Alexie Linardatos",
+      "parent": "904ecade30f41316ade8265a2fc847cb3fa249c2",
+      "scorecard_file": "6586efe02abf2bbf03fca5f8697dc4cee01696d7.json",
+      "sha": "6586efe02abf2bbf03fca5f8697dc4cee01696d7",
+      "short_sha": "6586efe",
+      "subject": "Merge pull request #9 from nshah271/feat/p3.2-pre-commit-hook",
+      "timestamp": "2026-05-15T23:34:33-04:00",
+      "top_finding": null,
+      "total_findings": 0,
+      "verdict": "PASS"
+    },
+    {
+      "author": "Neel Samirkumar Shah",
+      "parent": "6586efe02abf2bbf03fca5f8697dc4cee01696d7",
+      "scorecard_file": "1bdb6717680a09900e9d519a2e6898b3aa09cadd.json",
+      "sha": "1bdb6717680a09900e9d519a2e6898b3aa09cadd",
+      "short_sha": "1bdb671",
+      "subject": "polished up scorecard (#10)",
+      "timestamp": "2026-05-16T00:00:08-04:00",
+      "top_finding": {
+        "confidence": 0.9,
+        "kind": "vacuous_test",
+        "message": "test has no assertions"
+      },
+      "total_findings": 12,
+      "verdict": "LIED"
+    },
+    {
+      "author": "Ben Leung",
+      "parent": "1bdb6717680a09900e9d519a2e6898b3aa09cadd",
+      "scorecard_file": "913e9183d0bf4a048297e5f25fb65dd1302b4fa6.json",
+      "sha": "913e9183d0bf4a048297e5f25fb65dd1302b4fa6",
+      "short_sha": "913e918",
+      "subject": "Merge pull request #11 from nshah271/feat/p2.5-custom-mode-and-commands",
+      "timestamp": "2026-05-16T00:03:28-04:00",
+      "top_finding": {
+        "confidence": 0.7,
+        "kind": "vacuous_test",
+        "message": "test does not call any new function"
+      },
+      "total_findings": 14,
+      "verdict": "SUSPICIOUS"
+    },
+    {
+      "author": "Ben Leung",
+      "parent": "913e9183d0bf4a048297e5f25fb65dd1302b4fa6",
+      "scorecard_file": "715a8aeab6bd3dbc8598755cff5810256ce52d7f.json",
+      "sha": "715a8aeab6bd3dbc8598755cff5810256ce52d7f",
+      "short_sha": "715a8ae",
+      "subject": "Merge pull request #12 from nshah271/feat/p2.5-custom-mode-and-commands",
+      "timestamp": "2026-05-16T00:07:22-04:00",
+      "top_finding": {
+        "confidence": 0.7,
+        "kind": "vacuous_test",
+        "message": "test does not call any new function"
+      },
+      "total_findings": 3,
+      "verdict": "SUSPICIOUS"
+    },
+    {
+      "author": "Benedict-Leung",
+      "parent": "715a8aeab6bd3dbc8598755cff5810256ce52d7f",
+      "scorecard_file": "ca0d0b2dac13febee5abca607ecc14c22b3c7107.json",
+      "sha": "ca0d0b2dac13febee5abca607ecc14c22b3c7107",
+      "short_sha": "ca0d0b2",
+      "subject": "Add P2.5 Bob integration session history and summary",
+      "timestamp": "2026-05-16T00:12:38-04:00",
+      "top_finding": null,
+      "total_findings": 0,
+      "verdict": "PASS"
+    },
+    {
+      "author": "Alexie Linardatos",
+      "parent": "ca0d0b2dac13febee5abca607ecc14c22b3c7107",
+      "scorecard_file": "7a4ea94b8444a946eb4939731b76217f805e6978.json",
+      "sha": "7a4ea94b8444a946eb4939731b76217f805e6978",
+      "short_sha": "7a4ea94",
+      "subject": "Merge pull request #13 from nshah271/feat/p3.3-coverage-delta",
+      "timestamp": "2026-05-16T00:17:16-04:00",
+      "top_finding": {
+        "confidence": 0.9,
+        "kind": "dead_function",
+        "message": "pytest_sessionstart() is never referenced in the repo"
+      },
+      "total_findings": 2,
+      "verdict": "LIED"
+    },
+    {
+      "author": "Neel Samirkumar Shah",
+      "parent": "7a4ea94b8444a946eb4939731b76217f805e6978",
+      "scorecard_file": "c7e6e798b48ca3c5c2a1f55edcda6837b5d56fef.json",
+      "sha": "c7e6e798b48ca3c5c2a1f55edcda6837b5d56fef",
+      "short_sha": "c7e6e79",
+      "subject": "add hallucinated api check using jedi for type resolution (#14)",
+      "timestamp": "2026-05-16T00:52:25-04:00",
+      "top_finding": {
+        "confidence": 0.9,
+        "kind": "vacuous_test",
+        "message": "test has no assertions"
+      },
+      "total_findings": 8,
+      "verdict": "LIED"
+    },
+    {
+      "author": "jacobh3ll0",
+      "parent": "c7e6e798b48ca3c5c2a1f55edcda6837b5d56fef",
+      "scorecard_file": "c219a5335454f76a2901fab5fccfc21b12ee93c6.json",
+      "sha": "c219a5335454f76a2901fab5fccfc21b12ee93c6",
+      "short_sha": "c219a53",
+      "subject": "Merge pull request #15 from nshah271/feature/dead-function-detection",
+      "timestamp": "2026-05-16T01:24:11-04:00",
+      "top_finding": {
+        "confidence": 0.85,
+        "kind": "hallucinated_api",
+        "message": "no attribute 'read_text' on Generator"
+      },
+      "total_findings": 2,
+      "verdict": "LIED"
+    },
+    {
+      "author": "Alexie Linardatos",
+      "parent": "c219a5335454f76a2901fab5fccfc21b12ee93c6",
+      "scorecard_file": "24794a02a55cfd4187746f90beab9148767762ba.json",
+      "sha": "24794a02a55cfd4187746f90beab9148767762ba",
+      "short_sha": "24794a0",
+      "subject": "Merge pull request #16 from nshah271/feat/p3.1-github-action-wrapper",
+      "timestamp": "2026-05-16T01:31:38-04:00",
+      "top_finding": null,
+      "total_findings": 0,
+      "verdict": "PASS"
+    },
+    {
+      "author": "AlexieLinardatos",
+      "parent": "24794a02a55cfd4187746f90beab9148767762ba",
+      "scorecard_file": "df55e9c8ac8dd0009a7d73296b82b157031b4184.json",
+      "sha": "df55e9c8ac8dd0009a7d73296b82b157031b4184",
+      "short_sha": "df55e9c",
+      "subject": "added p3.1",
+      "timestamp": "2026-05-16T01:35:53-04:00",
+      "top_finding": null,
+      "total_findings": 0,
+      "verdict": "PASS"
+    },
+    {
+      "author": "Neel Samirkumar Shah",
+      "parent": "df55e9c8ac8dd0009a7d73296b82b157031b4184",
+      "scorecard_file": "3181095b0c6829b1231336c25c3b8ca842cfa880.json",
+      "sha": "3181095b0c6829b1231336c25c3b8ca842cfa880",
+      "short_sha": "3181095",
+      "subject": "fix mcp server timeouts with per-check budget and async wrapping (#17)",
+      "timestamp": "2026-05-16T01:52:50-04:00",
+      "top_finding": {
+        "confidence": 0.9,
+        "kind": "vacuous_test",
+        "message": "test has no assertions"
+      },
+      "total_findings": 9,
+      "verdict": "LIED"
+    },
+    {
+      "author": "jacobh3ll0",
+      "parent": "3181095b0c6829b1231336c25c3b8ca842cfa880",
+      "scorecard_file": "1bf92b18aef9ba4e1e2ee54a4e185d39d8c45f7c.json",
+      "sha": "1bf92b18aef9ba4e1e2ee54a4e185d39d8c45f7c",
+      "short_sha": "1bf92b1",
+      "subject": "Merge pull request #18 from nshah271/feature/dead-function-detection",
+      "timestamp": "2026-05-16T02:15:41-04:00",
+      "top_finding": {
+        "confidence": 1.0,
+        "kind": "vacuous_test",
+        "message": "test body is empty"
+      },
+      "total_findings": 33,
+      "verdict": "LIED"
+    },
+    {
+      "author": "Neel Samirkumar Shah",
+      "parent": "1bf92b18aef9ba4e1e2ee54a4e185d39d8c45f7c",
+      "scorecard_file": "90dfcb584250d823f0f56d8dca5460c0b3c3e0e8.json",
+      "sha": "90dfcb584250d823f0f56d8dca5460c0b3c3e0e8",
+      "short_sha": "90dfcb5",
+      "subject": "fix github action installing wrong package from pypi (#19)",
+      "timestamp": "2026-05-16T02:39:40-04:00",
+      "top_finding": null,
+      "total_findings": 0,
+      "verdict": "PASS"
+    },
+    {
+      "author": "Neel Samirkumar Shah",
+      "parent": "90dfcb584250d823f0f56d8dca5460c0b3c3e0e8",
+      "scorecard_file": "29a8610b5a2c5254d29aa0d248a45c2f2cb7257c.json",
+      "sha": "29a8610b5a2c5254d29aa0d248a45c2f2cb7257c",
+      "short_sha": "29a8610",
+      "subject": "register dead_functions check, unskip trace tests, suppress mocks, editable install for action (#20)",
+      "timestamp": "2026-05-16T03:08:23-04:00",
+      "top_finding": null,
+      "total_findings": 0,
+      "verdict": "PASS"
+    }
+  ],
+  "generated_at": "2026-05-16T21:48:15+00:00",
+  "repo": "nshah271/verdict",
+  "static_only": true
+}
