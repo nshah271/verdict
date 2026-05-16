@@ -24,28 +24,23 @@ class TestMcpConfigPaths:
         result = get_project_mcp_config_path()
         assert result == Path("/fake/project/.bob/mcp.json")
 
-    @patch("platform.system")
-    @patch.dict("os.environ", {"APPDATA": "C:\\Users\\Test\\AppData\\Roaming"})
-    def test_global_mcp_path_windows(self, mock_system: MagicMock) -> None:
-        """Test global MCP config path on Windows."""
-        mock_system.return_value = "Windows"
-        result = get_global_mcp_config_path()
-        assert result == Path("C:\\Users\\Test\\AppData\\Roaming\\Bob\\settings\\mcp_settings.json")
-
-    @patch("platform.system")
     @patch("pathlib.Path.home")
-    def test_global_mcp_path_macos(self, mock_home: MagicMock, mock_system: MagicMock) -> None:
+    def test_global_mcp_path_windows(self, mock_home: MagicMock) -> None:
+        """Test global MCP config path on Windows."""
+        mock_home.return_value = Path("C:\\Users\\Test")
+        result = get_global_mcp_config_path()
+        assert result == Path("C:\\Users\\Test\\.bob\\settings\\mcp_settings.json")
+
+    @patch("pathlib.Path.home")
+    def test_global_mcp_path_macos(self, mock_home: MagicMock) -> None:
         """Test global MCP config path on macOS."""
-        mock_system.return_value = "Darwin"
         mock_home.return_value = Path("/Users/test")
         result = get_global_mcp_config_path()
         assert result == Path("/Users/test/.bob/settings/mcp_settings.json")
 
-    @patch("platform.system")
     @patch("pathlib.Path.home")
-    def test_global_mcp_path_linux(self, mock_home: MagicMock, mock_system: MagicMock) -> None:
+    def test_global_mcp_path_linux(self, mock_home: MagicMock) -> None:
         """Test global MCP config path on Linux."""
-        mock_system.return_value = "Linux"
         mock_home.return_value = Path("/home/test")
         result = get_global_mcp_config_path()
         assert result == Path("/home/test/.bob/settings/mcp_settings.json")
