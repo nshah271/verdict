@@ -3,22 +3,33 @@ requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "verdict-ai"
-version = "0.1.0.dev0"
+name = "myverdict"
+version = "0.1.0"
 description = "A lie detector for AI coding agents: audits diffs and traces what actually runs."
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
 authors = [{ name = "verdict contributors" }]
+keywords = ["ai", "code-review", "static-analysis", "lie-detector", "agents", "claude", "bob", "mcp"]
 classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "Topic :: Software Development :: Quality Assurance",
+  "Topic :: Software Development :: Testing",
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
   "License :: OSI Approved :: MIT License",
   "Operating System :: OS Independent",
 ]
 dependencies = ["mcp>=1.0.0", "click>=8.1", "jedi>=0.19"]
+
+[project.urls]
+Homepage = "https://github.com/nshah271/verdict"
+Repository = "https://github.com/nshah271/verdict"
+Issues = "https://github.com/nshah271/verdict/issues"
 
 [project.optional-dependencies]
 dev = ["ruff", "pytest", "pytest-asyncio", "pre-commit"]

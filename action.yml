@@ -27,7 +27,7 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - name: Install verdict-ai
+    - name: Install verdict (myverdict)
       shell: bash
       run: |
         # Editable install so the package's file paths point at the workspace

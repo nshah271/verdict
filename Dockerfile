@@ -6,8 +6,8 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Copy and install verdict from source (the PyPI package named verdict-ai
-# is unrelated to this project; do not install from PyPI).
+# Install from source. Published on PyPI as `myverdict` (the older
+# `verdict-ai` slot was taken by an unrelated project before we shipped).
 WORKDIR /app
 COPY . /app
 RUN pip install --no-cache-dir .
