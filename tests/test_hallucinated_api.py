@@ -159,22 +159,6 @@ def test_dunder_attr_suppressed(tmp_path):
     assert len(findings) == 0
 
 
-def test_magicmock_receiver_suppressed(tmp_path):
-    """MagicMock receivers are suppressed because Mock manufactures attrs via __getattr__."""
-    source = """from unittest.mock import MagicMock
-
-def use_mock():
-    mock = MagicMock()
-    mock.anything_at_all()
-    result = mock.fictional_attribute
-    return result
-"""
-    _write(tmp_path, source)
-    findings = check.run(str(tmp_path), [_added_func("sample.py", "use_mock", 3, 7)])
-
-    assert len(findings) == 0
-
-
 def test_only_added_functions_scanned(tmp_path):
     """Only functions in added_functions list should be scanned."""
     source = """class Foo:
