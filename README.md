@@ -4,6 +4,28 @@ A lie detector for AI coding agents. Audits an AI-generated diff statically and 
 
 Built for the IBM Bob hackathon (May 2026). Repo bootstrap in progress; the real README lands as part of P3.5.
 
+## Install
+
+```bash
+pip install myverdict
+```
+
+The PyPI package is named `myverdict` (the shorter `verdict-ai` slot was taken by an unrelated project before we shipped). The Python import is still `import verdict` and the CLI is still `verdict`.
+
+## Quick start with IBM Bob
+
+```bash
+# Install verdict's MCP server and Custom Mode globally so Bob sees them
+# in every project on this machine:
+verdict mcp-install --global
+verdict bob-mode-install --global
+
+# Restart Bob, then in any project switch to "Verifier" mode after a
+# coding session or type /verify for a one-shot audit.
+```
+
+Drop `--global` to install per-project under `.bob/` instead.
+
 ## Status
 
 | Priority | Owner | Status |
