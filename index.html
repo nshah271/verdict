@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>verdict — a lie detector for AI coding agents</title>
+  <meta name="description" content="Verdict audits AI-generated diffs statically and dynamically, returns one of PASS / SUSPICIOUS / LIED. Built for the IBM Bob hackathon.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%9A%96%EF%B8%8F%3C/text%3E%3C/svg%3E">
+  <style>
+    :root {
+      --pass: #4ade80;
+      --suspicious: #facc15;
+      --lied: #ef4444;
+      --pass-dim: #166534;
+      --suspicious-dim: #854d0e;
+      --lied-dim: #7f1d1d;
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --surface-2: #273449;
+      --border: #334155;
+      --text: #e2e8f0;
+      --muted: #64748b;
+      --accent: #f8fafc;
+      --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+      --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
+    body { line-height: 1.55; }
+    a { color: var(--accent); text-decoration: none; border-bottom: 1px dotted var(--muted); }
+    a:hover { color: var(--pass); border-bottom-color: var(--pass); }
+    code, pre { font-family: var(--mono); }
+    .container { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+
+    /* nav */
+    nav { padding: 20px 0; border-bottom: 1px solid var(--border); }
+    nav .container { display: flex; justify-content: space-between; align-items: center; }
+    nav .brand { font-family: var(--mono); font-weight: 600; font-size: 18px; }
+    nav .brand .muted { color: var(--muted); font-weight: 400; }
+    nav .links a { margin-left: 24px; font-size: 14px; border-bottom: none; color: var(--muted); }
+    nav .links a:hover { color: var(--text); }
+
+    /* hero */
+    .hero { padding: 80px 0 64px; text-align: center; }
+    .hero h1 { font-family: var(--mono); font-size: 56px; font-weight: 600; margin: 0 0 20px; letter-spacing: -0.03em; line-height: 1.05; }
+    .hero h1 .grad { background: linear-gradient(120deg, var(--pass), var(--suspicious), var(--lied)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .hero .tagline { font-size: 22px; color: var(--text); max-width: 640px; margin: 0 auto 12px; line-height: 1.4; }
+    .hero .sub { font-size: 16px; color: var(--muted); max-width: 600px; margin: 0 auto 36px; }
+    .verdict-pills { display: inline-flex; gap: 8px; margin-bottom: 36px; font-family: var(--mono); font-size: 13px; font-weight: 600; }
+    .pill { padding: 6px 14px; border-radius: 999px; letter-spacing: 0.08em; }
+    .pill.pass { color: var(--pass); background: var(--pass-dim); }
+    .pill.sus { color: var(--suspicious); background: var(--suspicious-dim); }
+    .pill.lied { color: var(--lied); background: var(--lied-dim); }
+    .install { display: inline-flex; align-items: center; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 18px; font-family: var(--mono); font-size: 16px; gap: 12px; margin-bottom: 24px; }
+    .install .prompt { color: var(--muted); }
+    .install code { color: var(--accent); }
+    .ctas { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 8px; }
+    .btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 22px; border-radius: 8px; font-size: 15px; font-weight: 500; border: 1px solid var(--border); background: var(--surface); color: var(--text); transition: background 120ms, border-color 120ms; }
+    .btn:hover { background: var(--surface-2); border-color: var(--muted); color: var(--text); }
+    .btn.primary { background: var(--pass); color: var(--bg); border-color: var(--pass); font-weight: 600; }
+    .btn.primary:hover { background: #22c55e; border-color: #22c55e; color: var(--bg); }
+
+    /* sections */
+    section { padding: 64px 0; border-top: 1px solid var(--border); }
+    section h2 { font-family: var(--mono); font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin: 0 0 8px; }
+    section .lead { font-size: 28px; font-weight: 600; margin: 0 0 12px; letter-spacing: -0.01em; line-height: 1.25; max-width: 760px; }
+    section .lead-sub { font-size: 17px; color: var(--muted); max-width: 720px; margin: 0 0 40px; }
+
+    /* check grid */
+    .check-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+    .check { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px 22px; }
+    .check h3 { margin: 0 0 6px; font-family: var(--mono); font-size: 14px; font-weight: 600; color: var(--accent); }
+    .check .badge { display: inline-block; font-family: var(--mono); font-size: 10px; padding: 2px 8px; border-radius: 4px; background: var(--surface-2); color: var(--muted); margin-bottom: 10px; letter-spacing: 0.05em; }
+    .check p { margin: 0; font-size: 14px; color: var(--text); line-height: 1.5; }
+
+    /* surfaces */
+    .surface-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+    .surface { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 22px 22px; display: flex; flex-direction: column; gap: 8px; }
+    .surface .num { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+    .surface h3 { margin: 0; font-size: 17px; font-weight: 600; }
+    .surface p { margin: 0; font-size: 13px; color: var(--muted); line-height: 1.5; flex: 1; }
+    .surface .cta { font-family: var(--mono); font-size: 12px; color: var(--pass); border-bottom: none; padding-top: 8px; }
+
+    /* demo block */
+    .demo-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .demo-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px 26px; }
+    .demo-card h3 { margin: 0 0 8px; font-size: 18px; font-weight: 600; }
+    .demo-card p { margin: 0 0 16px; font-size: 14px; color: var(--muted); }
+    .demo-card .open { font-family: var(--mono); font-size: 13px; color: var(--pass); }
+
+    /* install steps */
+    .steps { display: grid; gap: 12px; }
+    .step { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px 22px; display: grid; grid-template-columns: 32px 1fr; gap: 16px; align-items: start; }
+    .step .n { font-family: var(--mono); font-size: 14px; color: var(--muted); margin-top: 2px; }
+    .step h4 { margin: 0 0 6px; font-size: 15px; font-weight: 600; }
+    .step pre { margin: 8px 0 0; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; font-size: 13px; overflow-x: auto; color: var(--accent); }
+    .step .note { font-size: 13px; color: var(--muted); margin-top: 6px; }
+
+    /* footer */
+    footer { padding: 48px 0 64px; border-top: 1px solid var(--border); text-align: center; color: var(--muted); font-size: 13px; }
+    footer p { margin: 4px 0; }
+    footer a { color: var(--muted); }
+
+    /* responsive */
+    @media (max-width: 720px) {
+      .hero { padding: 56px 0 40px; }
+      .hero h1 { font-size: 38px; }
+      .hero .tagline { font-size: 18px; }
+      .demo-cards { grid-template-columns: 1fr; }
+      .install { font-size: 13px; padding: 10px 14px; }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="container">
+      <span class="brand">verdict <span class="muted">/ AI lie detector</span></span>
+      <div class="links">
+        <a href="#install">Install</a>
+        <a href="#checks">Checks</a>
+        <a href="#surfaces">Surfaces</a>
+        <a href="dashboard/">Dashboard</a>
+        <a href="https://github.com/nshah271/verdict">GitHub</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="container">
+      <h1>Catch AI agents <span class="grad">lying</span> about<br>the code they ship.</h1>
+      <p class="tagline">
+        Verdict audits an AI-generated diff statically and by tracing what actually runs,
+        then returns a single scorecard:
+      </p>
+      <div class="verdict-pills">
+        <span class="pill pass">PASS</span>
+        <span class="pill sus">SUSPICIOUS</span>
+        <span class="pill lied">LIED</span>
+      </div>
+      <p class="sub">
+        Linters say it compiles. Type checkers say the types match. CI is green.
+        The agent says &ldquo;done.&rdquo; Verdict actually checks.
+      </p>
+      <div class="install" id="install">
+        <span class="prompt">$</span>
+        <code>pip install myverdict</code>
+      </div>
+      <div class="ctas">
+        <a class="btn primary" href="https://github.com/nshah271/verdict#installation">Get started &rarr;</a>
+        <a class="btn" href="dashboard/">See the dashboard</a>
+        <a class="btn" href="https://github.com/neelshah27/verdict-demo">Try the demo repo</a>
+        <a class="btn" href="verdict-vscode/verdict-vscode-0.2.0.vsix">Download .vsix</a>
+      </div>
+    </div>
+  </header>
+
+  <section id="checks">
+    <div class="container">
+      <h2>Seven checks</h2>
+      <p class="lead">Each one targets a distinct class of agent failure.</p>
+      <p class="lead-sub">Five static checks run on the AST. Two dynamic checks run the test suite under a tracer. All seven are auto-discovered &mdash; adding an eighth is one file.</p>
+      <div class="check-grid">
+        <div class="check">
+          <h3>dead_function</h3>
+          <span class="badge">STATIC</span>
+          <p>A function was added but is never referenced anywhere. Classic &ldquo;wrote a helper to look productive, forgot to wire it up.&rdquo;</p>
+        </div>
+        <div class="check">
+          <h3>vacuous_tests</h3>
+          <span class="badge">STATIC</span>
+          <p>Test functions that don&rsquo;t actually verify anything. Empty body, no asserts, mock-only assertions, or never reach new code.</p>
+        </div>
+        <div class="check">
+          <h3>hallucinated_api</h3>
+          <span class="badge">STATIC</span>
+          <p>Calls to methods that don&rsquo;t exist on the inferred type. <code>list.add()</code>, <code>str.uppercase()</code>, <code>dict.put()</code>. Powered by Jedi.</p>
+        </div>
+        <div class="check">
+          <h3>phantom_files</h3>
+          <span class="badge">STATIC</span>
+          <p>Agent transcript claims a file was created, but the file isn&rsquo;t on disk. Catches hallucinated file creation.</p>
+        </div>
+        <div class="check">
+          <h3>suppressed_exception</h3>
+          <span class="badge">STATIC</span>
+          <p>Bare <code>except:</code>, <code>except Exception: pass</code>, log-and-continue. The &ldquo;make the error go away&rdquo; anti-fix.</p>
+        </div>
+        <div class="check">
+          <h3>trace</h3>
+          <span class="badge">DYNAMIC</span>
+          <p>Runs pytest under <code>sys.settrace</code>. Any newly-added function whose body never actually executes gets flagged.</p>
+        </div>
+        <div class="check">
+          <h3>coverage_delta</h3>
+          <span class="badge">DYNAMIC</span>
+          <p>Line-level coverage on just the diff&rsquo;s added lines. Below 50%? Flagged. Sharper than whole-file coverage.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="surfaces">
+    <div class="container">
+      <h2>Five surfaces, one binary</h2>
+      <p class="lead">Use it where you already are.</p>
+      <p class="lead-sub">Same scorecard powers a CLI, an MCP tool, a Bob mode, an editor tab, a CI bot, and an analytics dashboard. Pick whichever fits the moment.</p>
+      <div class="surface-grid">
+        <div class="surface">
+          <span class="num">01 &middot; CLI</span>
+          <h3>verdict run</h3>
+          <p>One-shot audit on any git repo. Prints a scorecard, writes <code>verdict-report.json</code>.</p>
+        </div>
+        <div class="surface">
+          <span class="num">02 &middot; MCP</span>
+          <h3>verdict-mcp</h3>
+          <p>Bob (or any MCP client) calls <code>check_diff</code> mid-conversation. Live tool-use.</p>
+        </div>
+        <div class="surface">
+          <span class="num">03 &middot; Bob mode</span>
+          <h3>/verify + Verifier</h3>
+          <p>Custom Mode + slash command. Read-only auditor agent that narrates findings.</p>
+        </div>
+        <div class="surface">
+          <span class="num">04 &middot; Editor</span>
+          <h3>Verdict tab</h3>
+          <p>Bottom-panel webview in Bob / VS Code. Filterable findings list with &ldquo;Fix with Bob&rdquo; handoff.</p>
+        </div>
+        <div class="surface">
+          <span class="num">05 &middot; CI</span>
+          <h3>GitHub Action</h3>
+          <p>PR comment with deep links to every finding. Green check by default, opt into <code>fail-on</code> for strictness.</p>
+          <a class="cta" href="dashboard/">06 &middot; Dashboard &rarr;</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <h2>See it live</h2>
+      <p class="lead">Two click-through demos.</p>
+      <div class="demo-cards">
+        <a class="demo-card" href="dashboard/" style="border-bottom: none;">
+          <h3>Analytics dashboard &rarr;</h3>
+          <p>Browse this repo&rsquo;s own commit history scored by verdict. Filter by fixture / test / prod, click any commit dot to drill into the full findings list.</p>
+          <div class="open">opens nshah271/verdict/dashboard/</div>
+        </a>
+        <a class="demo-card" href="https://github.com/neelshah27/verdict-demo" style="border-bottom: none;">
+          <h3>Demo repo &rarr;</h3>
+          <p>A tiny deliberately-broken Python project with one labeled file per check kind. Clone it, run verdict, see each lie get caught.</p>
+          <div class="open">opens neelshah27/verdict-demo</div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <h2>Five-minute install</h2>
+      <p class="lead">On a fresh machine, end to end.</p>
+      <div class="steps">
+        <div class="step">
+          <span class="n">01</span>
+          <div>
+            <h4>Install the CLI</h4>
+            <pre>pip install myverdict
+verdict --help</pre>
+          </div>
+        </div>
+        <div class="step">
+          <span class="n">02</span>
+          <div>
+            <h4>Hook into Bob (machine-wide)</h4>
+            <pre>verdict mcp-install --global
+verdict bob-mode-install --global
+# restart Bob</pre>
+            <div class="note">Drop <code>--global</code> for per-project install under <code>.bob/</code>.</div>
+          </div>
+        </div>
+        <div class="step">
+          <span class="n">03</span>
+          <div>
+            <h4>Install the editor tab</h4>
+            <div class="note">
+              <a href="verdict-vscode/verdict-vscode-0.2.0.vsix">Download verdict-vscode-0.2.0.vsix</a>,
+              drop it into any project folder, right-click in the editor &rarr;
+              <strong>Install Extension VSIX</strong>, reload the window.
+            </div>
+          </div>
+        </div>
+        <div class="step">
+          <span class="n">04</span>
+          <div>
+            <h4>Try it on a real repo</h4>
+            <pre>cd &lt;some-git-repo&gt;
+verdict run --diff-range HEAD~1</pre>
+          </div>
+        </div>
+        <div class="step">
+          <span class="n">05</span>
+          <div>
+            <h4>Add to CI</h4>
+            <pre># .github/workflows/verdict.yml
+on: pull_request
+permissions: { contents: read, pull-requests: write }
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - uses: nshah271/verdict@main</pre>
+          </div>
+        </div>
+        <div class="step">
+          <span class="n">06</span>
+          <div>
+            <h4>Browse history</h4>
+            <pre>verdict dashboard</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <p>Built for the <strong>IBM Bob hackathon</strong> &middot; May 2026</p>
+      <p>By Neel, Jacob, Alexie, and Ben &middot; <a href="https://github.com/nshah271/verdict">github.com/nshah271/verdict</a></p>
+    </div>
+  </footer>
+</body>
+</html>
