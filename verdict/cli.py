@@ -8,9 +8,7 @@ This module provides the command-line interface for verdict, including:
 
 import importlib
 import json
-import os
 import pkgutil
-import platform
 import shutil
 import sys
 from pathlib import Path
@@ -25,22 +23,12 @@ from verdict.types import Check, Scorecard
 
 
 def get_global_mcp_config_path() -> Path:
-    """Get the platform-specific path to Bob's global MCP configuration file.
+    """Get the path to Bob's global MCP configuration file.
 
     Returns:
-        Path to global mcp_settings.json for the current platform
+        Path to global mcp_settings.json (~/.bob/settings/mcp_settings.json on all platforms)
     """
-    system = platform.system()
-
-    if system == "Windows":
-        appdata = os.environ.get("APPDATA")
-        if not appdata:
-            raise RuntimeError("APPDATA environment variable not set")
-        return Path(appdata) / "Bob" / "settings" / "mcp_settings.json"
-    elif system == "Darwin":  # macOS
-        return Path.home() / ".bob" / "settings" / "mcp_settings.json"
-    else:  # Linux and others
-        return Path.home() / ".bob" / "settings" / "mcp_settings.json"
+    return Path.home() / ".bob" / "settings" / "mcp_settings.json"
 
 
 def get_project_mcp_config_path() -> Path:
