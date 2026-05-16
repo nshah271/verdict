@@ -1,0 +1,17 @@
+# Usage: Add this to your .pre-commit-config.yaml
+#
+# repos:
+#   - repo: https://github.com/nshah271/verdict
+#     rev: v0.1.0
+#     hooks:
+#       - id: verdict
+
+- id: verdict
+  name: verdict — AI agent lie detector
+  language: python
+  entry: verdict run --fail-on lied
+  types: [python]
+  pass_filenames: false
+  stages: [pre-commit]
+
+# Made with Bob
