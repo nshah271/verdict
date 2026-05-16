@@ -246,7 +246,10 @@ def test_run_checks_safe_success(tmp_path, mock_scorecard):
         assert scorecard["verdict"] == "LIED"
         assert len(scorecard["findings"]) == 1
         mock_run_checks.assert_called_once_with(
-            repo_path=str(tmp_path), diff_range="HEAD", static_only=False
+            repo_path=str(tmp_path),
+            diff_range="HEAD",
+            static_only=False,
+            per_check_timeout=25.0,
         )
 
 
@@ -265,7 +268,10 @@ def test_run_checks_safe_passes_parameters(tmp_path, mock_pass_scorecard):
 
         assert scorecard["verdict"] == "PASS"
         mock_run_checks.assert_called_once_with(
-            repo_path=str(tmp_path), diff_range="main..HEAD", static_only=True
+            repo_path=str(tmp_path),
+            diff_range="main..HEAD",
+            static_only=True,
+            per_check_timeout=25.0,
         )
 
 

@@ -6,6 +6,7 @@ This module provides the command-line interface for verdict, including:
 - verdict bob-mode install: Install Bob Custom Mode and slash command
 """
 
+import concurrent.futures
 import importlib
 import json
 import pkgutil
@@ -19,7 +20,7 @@ import verdict.checks
 from verdict.ast_utils import get_added_functions
 from verdict.diff import get_changed_files
 from verdict.report import build_scorecard, format_json, format_terminal
-from verdict.types import Check, Scorecard
+from verdict.types import Check, Finding, Scorecard
 
 
 def get_global_mcp_config_path() -> Path:
@@ -224,6 +225,7 @@ def run_checks(
     diff_range: str = "HEAD",
     static_only: bool = False,
     dynamic_only: bool = False,
+    per_check_timeout: float | None = None,
 ) -> Scorecard:
     """Run verdict checks and return scorecard.
 
@@ -232,6 +234,9 @@ def run_checks(
         diff_range: Git diff range to audit (default: "HEAD")
         static_only: If True, run only static checks (no test execution)
         dynamic_only: If True, run only dynamic checks
+        per_check_timeout: Wall-clock cap per check in seconds. None means
+            no timeout (CLI default). MCP callers should pass a finite value
+            so one slow check can't block the whole call.
 
     Returns:
         Scorecard with verdict, findings, and summary
@@ -258,12 +263,32 @@ def run_checks(
         checks_to_run.append(check)
 
     # Run checks and collect findings
-    findings = []
+    findings: list[Finding] = []
     checks_failed = 0
+    checks_timed_out = 0
     for check in checks_to_run:
         try:
-            check_findings = check.run(repo_path, added_functions)
+            check_findings = _run_one_check(
+                check, repo_path, added_functions, per_check_timeout
+            )
             findings.extend(check_findings)
+        except concurrent.futures.TimeoutError:
+            checks_timed_out += 1
+            findings.append(
+                {
+                    "kind": "check_timed_out",
+                    "file": "",
+                    "line": 0,
+                    "message": (
+                        f"check '{check.name}' exceeded {per_check_timeout}s timeout"
+                    ),
+                    "confidence": 0.5,
+                }
+            )
+            print(
+                f"Warning: Check '{check.name}' exceeded {per_check_timeout}s timeout",
+                file=sys.stderr,
+            )
         except Exception as e:
             checks_failed += 1
             print(
@@ -279,10 +304,35 @@ def run_checks(
         "diff_range": diff_range,
         "checks_run": len(checks_to_run),
         "checks_failed": checks_failed,
+        "checks_timed_out": checks_timed_out,
     }
 
     # Build and return scorecard
     return build_scorecard(findings, summary)
+
+
+def _run_one_check(
+    check: Check,
+    repo_path: str,
+    added_functions: list,
+    per_check_timeout: float | None,
+) -> list[Finding]:
+    """Run a single check, optionally bounded by a wall-clock timeout.
+
+    A timed-out thread is not killed (Python can't), but we abandon waiting
+    on it and continue. The stuck thread leaks until it eventually returns
+    or the process exits, which is acceptable for the MCP server's typical
+    lifetime.
+    """
+    if per_check_timeout is None:
+        return check.run(repo_path, added_functions)
+
+    executor = concurrent.futures.ThreadPoolExecutor(max_workers=1)
+    try:
+        future = executor.submit(check.run, repo_path, added_functions)
+        return future.result(timeout=per_check_timeout)
+    finally:
+        executor.shutdown(wait=False)
 
 
 @click.group()
