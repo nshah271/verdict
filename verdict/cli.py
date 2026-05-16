@@ -71,37 +71,32 @@ def check_mcp_installed() -> bool:
         return False
 
 
-def install_bob_mode() -> None:
-    """Install verdict Custom Mode and slash commands as project-level Bob configuration.
+def install_bob_mode(is_global: bool = False) -> None:
+    """Install verdict Custom Mode + slash commands into Bob's configuration.
 
-    This function:
-    1. Creates .bob directory in the current project
-    2. Copies custom_modes.yaml to .bob/custom_modes.yaml
-    3. Creates .bob/commands directory and installs slash commands
-    4. Checks if MCP server is installed and warns if not
-
-    Bob Custom Modes can be installed at two levels:
-    - Project: .bob/custom_modes.yaml (this function)
-    - Global: ~/.bob/settings/custom_modes.yaml (user must do manually)
-
-    Slash commands can be installed at two levels:
-    - Project: .bob/commands/*.yaml (this function)
-    - Global: ~/.bob/commands/*.yaml (user must do manually)
+    Args:
+        is_global: If True, install to ~/.bob/settings/custom_modes.yaml and
+            ~/.bob/commands/ so Bob sees the verdict mode and /verify command
+            in every project. If False (default), install to .bob/ in the
+            current project only.
     """
     try:
-        # Install to project-level .bob directory
-        project_bob_dir = Path.cwd() / ".bob"
-        click.echo(f"Installing verdict Custom Mode to project: {project_bob_dir}")
+        if is_global:
+            custom_mode_target = Path.home() / ".bob" / "settings" / "custom_modes.yaml"
+            commands_dir = Path.home() / ".bob" / "commands"
+            click.echo(f"Installing verdict Custom Mode globally: {custom_mode_target}")
+        else:
+            project_bob_dir = Path.cwd() / ".bob"
+            custom_mode_target = project_bob_dir / "custom_modes.yaml"
+            commands_dir = project_bob_dir / "commands"
+            click.echo(f"Installing verdict Custom Mode to project: {project_bob_dir}")
 
-        # Create .bob directory
-        project_bob_dir.mkdir(exist_ok=True)
+        # Create parent dirs (~/.bob/settings or ./.bob)
+        custom_mode_target.parent.mkdir(parents=True, exist_ok=True)
 
         # Get source directory from package
         package_dir = Path(__file__).parent / "bob_integration"
         custom_mode_source = package_dir / "custom_mode.yaml"
-
-        # Target path for project-level custom mode
-        custom_mode_target = project_bob_dir / "custom_modes.yaml"
 
         # Copy Custom Mode (non-destructive - preserve if exists)
         if custom_mode_target.exists():
@@ -112,9 +107,8 @@ def install_bob_mode() -> None:
             click.echo(f"[OK] Custom Mode installed: {custom_mode_target}")
 
         # Install slash commands
-        commands_dir = project_bob_dir / "commands"
-        commands_dir.mkdir(exist_ok=True)
-        
+        commands_dir.mkdir(parents=True, exist_ok=True)
+
         slash_commands_source = package_dir / "slash_commands"
         if slash_commands_source.exists():
             # Copy all .md files from slash_commands directory
@@ -126,7 +120,7 @@ def install_bob_mode() -> None:
                 else:
                     shutil.copy2(md_file, target_file)
                     installed_commands.append(md_file.stem)
-            
+
             if installed_commands:
                 click.echo(f"[OK] Slash commands installed: {', '.join(f'/{cmd}' for cmd in installed_commands)}")
             else:
@@ -138,39 +132,39 @@ def install_bob_mode() -> None:
         mcp_installed = check_mcp_installed()
         if not mcp_installed:
             click.echo("\nNote: Verifier mode works best with the MCP server.")
-            click.echo("Run `verdict mcp install` to enable MCP integration.")
+            flag = " --global" if is_global else ""
+            click.echo(f"Run `verdict mcp install{flag}` to enable MCP integration.")
 
         # Print usage instructions
         click.echo("\nTo use:")
         click.echo("1. Restart Bob to load the new mode and slash commands")
         click.echo('2. Switch to "Verifier" mode after a coding session')
         click.echo("3. Or type /verify in any mode for a one-shot audit")
-        click.echo("\nNote: This installs as a project-level configuration.")
-        click.echo("For global installation:")
-        click.echo("  - Custom mode: copy to ~/.bob/settings/custom_modes.yaml")
-        click.echo("  - Slash commands: copy to ~/.bob/commands/")
+        if is_global:
+            click.echo("\nGlobal install: verdict mode + /verify available in every project.")
+        else:
+            click.echo("\nProject install: re-run with --global to make it available everywhere.")
 
     except Exception as e:
         click.echo(f"✗ Installation failed: {e}", err=True)
         sys.exit(1)
 
 
-def install_mcp_server() -> None:
-    """Install verdict MCP server as a project-level Bob configuration.
+def install_mcp_server(is_global: bool = False) -> None:
+    """Install the verdict MCP server into Bob's configuration.
 
-    This function:
-    1. Creates .bob directory in the current project
-    2. Creates/updates .bob/mcp.json with verdict server entry
-    3. Writes atomically to prevent corruption
-
-    Bob MCP servers can be installed at two levels:
-    - Project: .bob/mcp.json (this function)
-    - Global: ~/.bob/settings/mcp_settings.json (user must do manually)
+    Args:
+        is_global: If True, write to ~/.bob/settings/mcp_settings.json so the
+            server is available in every project. If False (default), write
+            to .bob/mcp.json in the current working directory.
     """
     try:
-        # Install to project-level .bob directory
-        config_path = get_project_mcp_config_path()
-        click.echo(f"Installing verdict MCP server to project: {config_path}")
+        if is_global:
+            config_path = get_global_mcp_config_path()
+            click.echo(f"Installing verdict MCP server globally: {config_path}")
+        else:
+            config_path = get_project_mcp_config_path()
+            click.echo(f"Installing verdict MCP server to project: {config_path}")
 
         # Create .bob directory if it doesn't exist
         config_path.parent.mkdir(parents=True, exist_ok=True)
@@ -210,8 +204,10 @@ def install_mcp_server() -> None:
         click.echo("1. Restart Bob")
         click.echo("2. Check that 'verdict' tools appear in Bob's tool list")
         click.echo("3. Try calling check_diff on a repository")
-        click.echo("\nNote: This installs as a project-level MCP server.")
-        click.echo("For global installation, copy to ~/.bob/settings/mcp_settings.json")
+        if is_global:
+            click.echo("\nGlobal install: available in every project on this machine.")
+        else:
+            click.echo("\nProject install: re-run with --global to make it available everywhere.")
 
     except Exception as e:
         click.echo(f"✗ Installation failed: {e}", err=True)
@@ -440,27 +436,136 @@ def run(
 
 
 @cli.command()
-def mcp_install() -> None:
-    """Install verdict MCP server into Bob's configuration.
+@click.option(
+    "--global",
+    "is_global",
+    is_flag=True,
+    help="Install to ~/.bob/settings/mcp_settings.json so every project sees it.",
+)
+def mcp_install(is_global: bool) -> None:
+    """Install the verdict MCP server into Bob's configuration.
 
-    This command:
-    - Locates Bob's MCP config file (platform-specific)
-    - Adds the verdict server entry
-    - Creates a portable config for other MCP clients
+    Without --global, writes to .bob/mcp.json in the current project.
+    With --global, writes to ~/.bob/settings/mcp_settings.json so the
+    server is available to Bob in any project on this machine.
     """
-    install_mcp_server()
+    install_mcp_server(is_global=is_global)
 
 
 @cli.command()
-def bob_mode_install() -> None:
-    """Install verdict Custom Mode and slash command into Bob's configuration.
+@click.option(
+    "--global",
+    "is_global",
+    is_flag=True,
+    help="Install to ~/.bob/settings + ~/.bob/commands so every project sees it.",
+)
+def bob_mode_install(is_global: bool) -> None:
+    """Install verdict Custom Mode and slash commands into Bob's configuration.
 
-    This command:
-    - Installs the Verifier Custom Mode for post-coding audits
-    - Installs the /verify slash command for one-shot audits
-    - Both artifacts are non-destructive (preserve existing config)
+    Without --global, writes to .bob/ in the current project. With --global,
+    writes to ~/.bob/settings/custom_modes.yaml + ~/.bob/commands/ so Bob
+    sees the verdict mode and /verify command in any project on this machine.
+    Both artifacts are non-destructive (preserve existing config).
     """
-    install_bob_mode()
+    install_bob_mode(is_global=is_global)
+
+
+@cli.command()
+@click.option("--no-backfill", is_flag=True, help="Skip backfill, serve existing data only.")
+@click.option("-n", "--count", type=int, default=None, help="How many commits to score.")
+@click.option("--branch", default=None, help="Branch to walk with --first-parent.")
+@click.option(
+    "--static-only/--no-static-only",
+    default=None,
+    help="Run only static checks. Default: yes (dynamic checks flake on old commits).",
+)
+@click.option("--force", is_flag=True, help="Re-score commits already cached in data/.")
+@click.option("--no-open", is_flag=True, help="Don't auto-open the browser.")
+@click.option("--port", type=int, default=8765, help="Port to serve dashboard on.")
+def dashboard(
+    no_backfill: bool,
+    count: int | None,
+    branch: str | None,
+    static_only: bool | None,
+    force: bool,
+    no_open: bool,
+    port: int,
+) -> None:
+    """Run backfill and open the verdict analytics dashboard.
+
+    Walks the verdict repo's git history, scores each commit, writes
+    dashboard/data/<sha>.json, then serves dashboard/ on a local HTTP
+    port and pops it in a browser. Press Ctrl+C to stop.
+    """
+    from verdict.dashboard_cmd import run_backfill, serve_and_open
+
+    repo_path = Path.cwd()
+    dashboard_dir = repo_path / "dashboard"
+    data_dir = dashboard_dir / "data"
+
+    if not dashboard_dir.exists():
+        click.echo(
+            f"Error: {dashboard_dir} does not exist. Run this from the verdict repo root.",
+            err=True,
+        )
+        sys.exit(1)
+
+    backfill_args_passed = (
+        count is not None or branch is not None or static_only is not None or force
+    )
+
+    if no_backfill:
+        do_backfill = False
+    elif backfill_args_passed:
+        do_backfill = True
+    else:
+        do_backfill = click.confirm("Backfill commits?", default=True)
+
+    if do_backfill:
+        if count is None:
+            count = click.prompt("How many commits to score?", default=30, type=int)
+        if branch is None:
+            branch = click.prompt("Branch to walk?", default="main")
+        if static_only is None:
+            include_dynamic = click.confirm(
+                "Include dynamic checks (slower, may flake on old commits)?",
+                default=False,
+            )
+            static_only = not include_dynamic
+        if not force and data_dir.exists() and any(data_dir.glob("*.json")):
+            force = click.confirm("Re-score commits already in data/?", default=False)
+
+        click.echo(f"\nBackfilling {count} commits from {branch}...")
+
+        def _progress(i: int, total: int, sha: str, subject: str, verdict: str, n: int) -> None:
+            short = sha[:7]
+            if len(subject) > 60:
+                subject = subject[:57] + "..."
+            click.echo(
+                f"  [{i:>2}/{total}] {short} {subject:<60}  {verdict:<11} {n:>3} findings"
+            )
+
+        try:
+            run_backfill(
+                str(repo_path),
+                n=count,
+                branch=branch,
+                static_only=static_only,
+                force=force,
+                progress=_progress,
+            )
+        except RuntimeError as e:
+            click.echo(f"Error: {e}", err=True)
+            sys.exit(1)
+    else:
+        if not (data_dir.exists() and any(data_dir.glob("*.json"))):
+            click.echo(
+                "Error: no data in dashboard/data/. Run without --no-backfill first.",
+                err=True,
+            )
+            sys.exit(1)
+
+    serve_and_open(dashboard_dir, port=port, open_browser=not no_open)
 
 
 if __name__ == "__main__":

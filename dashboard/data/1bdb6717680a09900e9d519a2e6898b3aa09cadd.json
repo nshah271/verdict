@@ -1,0 +1,98 @@
+{
+  "findings": [
+    {
+      "confidence": 0.9,
+      "file": "tests/test_report.py",
+      "kind": "vacuous_test",
+      "line": 15,
+      "message": "test has no assertions"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/test_report.py",
+      "kind": "vacuous_test",
+      "line": 15,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/test_report.py",
+      "kind": "vacuous_test",
+      "line": 183,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/test_report.py",
+      "kind": "vacuous_test",
+      "line": 218,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/test_report.py",
+      "kind": "vacuous_test",
+      "line": 246,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/test_report.py",
+      "kind": "vacuous_test",
+      "line": 263,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/test_report.py",
+      "kind": "vacuous_test",
+      "line": 280,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/test_report.py",
+      "kind": "vacuous_test",
+      "line": 290,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/test_report.py",
+      "kind": "vacuous_test",
+      "line": 307,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/test_report.py",
+      "kind": "vacuous_test",
+      "line": 324,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/test_report.py",
+      "kind": "vacuous_test",
+      "line": 444,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/test_report.py",
+      "kind": "vacuous_test",
+      "line": 474,
+      "message": "test does not call any new function"
+    }
+  ],
+  "summary": {
+    "checks_failed": 0,
+    "checks_run": 5,
+    "checks_timed_out": 0,
+    "diff_range": "6586efe02abf2bbf03fca5f8697dc4cee01696d7..1bdb6717680a09900e9d519a2e6898b3aa09cadd",
+    "dynamic_only": false,
+    "static_only": true,
+    "total_findings": 12
+  },
+  "verdict": "LIED"
+}

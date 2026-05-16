@@ -1,0 +1,13 @@
+{
+  "findings": [],
+  "summary": {
+    "checks_failed": 0,
+    "checks_run": 5,
+    "checks_timed_out": 0,
+    "diff_range": "42275f5a29f601d7e001cd4c525723718a416dd5..7f2104c3a40620a7c4c43da3db12f23308a5fcc1",
+    "dynamic_only": false,
+    "static_only": true,
+    "total_findings": 0
+  },
+  "verdict": "PASS"
+}

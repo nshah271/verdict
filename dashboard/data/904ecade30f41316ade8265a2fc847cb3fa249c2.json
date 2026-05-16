@@ -1,0 +1,63 @@
+{
+  "findings": [
+    {
+      "confidence": 0.9,
+      "file": "verdict/_tracer_plugin.py",
+      "kind": "dead_function",
+      "line": 65,
+      "message": "pytest_sessionstart() is never referenced in the repo"
+    },
+    {
+      "confidence": 0.9,
+      "file": "verdict/_tracer_plugin.py",
+      "kind": "dead_function",
+      "line": 77,
+      "message": "pytest_sessionfinish() is never referenced in the repo"
+    },
+    {
+      "confidence": 0.9,
+      "file": "tests/test_trace.py",
+      "kind": "vacuous_test",
+      "line": 19,
+      "message": "test has no assertions"
+    },
+    {
+      "confidence": 0.9,
+      "file": "tests/test_trace.py",
+      "kind": "vacuous_test",
+      "line": 37,
+      "message": "test has no assertions"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/test_trace.py",
+      "kind": "vacuous_test",
+      "line": 19,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/test_trace.py",
+      "kind": "vacuous_test",
+      "line": 37,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/test_trace.py",
+      "kind": "vacuous_test",
+      "line": 45,
+      "message": "test does not call any new function"
+    }
+  ],
+  "summary": {
+    "checks_failed": 0,
+    "checks_run": 5,
+    "checks_timed_out": 0,
+    "diff_range": "aee42787919dac5089958af1177eb48faf763d31..904ecade30f41316ade8265a2fc847cb3fa249c2",
+    "dynamic_only": false,
+    "static_only": true,
+    "total_findings": 7
+  },
+  "verdict": "LIED"
+}
