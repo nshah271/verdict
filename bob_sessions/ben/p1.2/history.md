@@ -348,7 +348,7 @@ I'll analyze the task and create a detailed plan for implementing the MCP server
  20 | 
  21 | ### Neel — Core engine
  22 | 
- 23 | Neel owns the internal spine of verdict — the foundation everyone else's checks plug into, and the dynamic tracer that makes the demo a showstopper. Heavy Claude Code work with crisp specs.
+ 23 | Neel owns the internal spine of verdict — the foundation everyone else's checks plug into, and the dynamic tracer that makes the demo a showstopper. Heavy planning work with crisp specs.
  24 | 
  25 | - **P0.1** Foundation: diff parser + AST helpers
  26 | - **P0.4** CLI + scorecard plumbing
