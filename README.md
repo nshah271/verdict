@@ -135,6 +135,37 @@ Five distinct surfaces, one scorecard format:
 - **Bob IDE** *or* VS Code 1.74+ (for the Verdict tab; CLI works without an editor)
 - **Node.js 20+** (only if you want to rebuild the VS Code extension from source)
 
+### TL;DR (the 5-minute demo flow)
+
+On a fresh machine, end-to-end:
+
+```bash
+# 1. install the CLI
+pip install myverdict
+verdict --help
+
+# 2. hook into Bob (one-time, machine-wide)
+verdict mcp-install --global
+verdict bob-mode-install --global
+# restart Bob
+
+# 3. install the editor tab
+#    download verdict-vscode-0.2.0.vsix from this repo's
+#    verdict-vscode/ folder, drop it in any project folder,
+#    right-click → Install Extension VSIX, reload the window.
+
+# 4. try it on a real repo
+cd <some-git-repo>
+verdict run --diff-range HEAD~1
+
+# 5. add it to a repo's CI (one .github/workflows/verdict.yml file, see below)
+
+# 6. browse history
+verdict dashboard
+```
+
+Each step is explained in detail below.
+
 ### 1. Install the Verdict CLI
 
 From anywhere:
@@ -187,12 +218,19 @@ Verdict also writes the full report to `verdict-report.json` in the repo root. T
 
 ### 3. Install the Bob MCP integration *(optional)*
 
-If you're using **Bob**, hook Verdict into Bob's tool list so agents can call `verdict.check_diff` mid-conversation:
+If you're using **Bob**, hook Verdict into Bob's tool list so agents can call `verdict.check_diff` mid-conversation. Two scopes:
 
 ```bash
-verdict mcp-install           # writes .bob/mcp.json in the current project
-verdict bob-mode-install      # installs the "Verifier" Custom Mode + /verify slash command
+# Recommended: install once, available in every project on this machine
+verdict mcp-install --global
+verdict bob-mode-install --global
+
+# Or, per-project install (writes into ./.bob/)
+verdict mcp-install
+verdict bob-mode-install
 ```
+
+`--global` writes to `~/.bob/settings/mcp_settings.json`, `~/.bob/settings/custom_modes.yaml`, and `~/.bob/commands/verify.md`. Drop `--global` to install only into the current project's `.bob/` directory.
 
 Restart Bob. You should now see:
 
@@ -204,16 +242,21 @@ Both installers are non-destructive — they preserve existing config and merge.
 
 ### 4. Install the Verdict VS Code tab
 
-There's a prebuilt `.vsix` in `verdict-vscode/`. Three ways to install it — pick whichever is easiest:
+A prebuilt `.vsix` ships with this repo. Three ways to install it — pick whichever is easiest:
 
-**A. Right-click in the editor's file explorer *(easiest — this is what works reliably).*** Open this repo in Bob / VS Code, expand the `verdict-vscode/` folder in the left sidebar, right-click `verdict-vscode-0.2.0.vsix`, and choose **Install Extension VSIX**. Reload the window when prompted.
+**A. Download → drop in your project → right-click *(easiest, works on a fresh machine without cloning the repo).***
 
-**B. Command Palette.** `Ctrl+Shift+P` → **Extensions: Install from VSIX…** → navigate to `verdict-vscode/verdict-vscode-0.2.0.vsix` → Install. Reload.
+1. Download [`verdict-vscode-0.2.0.vsix`](verdict-vscode/verdict-vscode-0.2.0.vsix) from this repo's `verdict-vscode/` folder. (Right-click the link → Save Link As, or grab it from the GitHub web UI.)
+2. Move the `.vsix` into any project folder you have open in Bob / VS Code.
+3. In the editor's file explorer (left sidebar), right-click the `.vsix` file → **Install Extension VSIX**.
+4. Reload the window when prompted.
 
-**C. Terminal — one-liner.** From the repo root (works for both Bob and VS Code — Bob ships the same `code` CLI):
+**B. Command Palette.** `Ctrl+Shift+P` (or `Cmd+Shift+P`) → **Extensions: Install from VSIX…** → navigate to the `.vsix` → Install. Reload.
+
+**C. Terminal — one-liner.** From wherever the `.vsix` lives (works for both Bob and VS Code — Bob ships the same `code` CLI):
 
 ```bash
-code --install-extension verdict-vscode/verdict-vscode-0.2.0.vsix --force
+code --install-extension verdict-vscode-0.2.0.vsix --force
 ```
 
 The `--force` flag overwrites any previous install of the same version. If you get `command not found: code`, the CLI isn't on PATH — open the editor, hit `Ctrl+Shift+P`, run **Shell Command: Install 'code' command in PATH**, then try again. Or just use method A or B — they don't need the shell command.
@@ -229,7 +272,43 @@ npm run compile
 npx @vscode/vsce package --no-dependencies --allow-missing-repository
 ```
 
-### 5. Open the analytics dashboard *(optional)*
+### 5. Add Verdict to a repo's CI *(optional)*
+
+Drop this file into the repo you want audited:
+
+```yaml
+# .github/workflows/verdict.yml
+name: Verdict
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: nshah271/verdict@main
+        # Optional inputs (all have defaults):
+        #   fail-on: never | suspicious | lied   (default: never)
+        #   comment-on-pr: true | false          (default: true)
+        #   static-only: true | false            (default: false)
+        #   diff-range: <any git range>          (default: origin/main...HEAD)
+```
+
+What happens after that:
+
+- Every PR (open + every push) gets a bot comment listing findings, each one a clickable deep link to the exact line.
+- Anyone watching the PR gets the comment in their inbox via GitHub's normal notification path — that's the "Verdict emails me my findings" experience, no SMTP setup needed.
+- The check stays **green** by default (informational). Flip `fail-on: lied` if you want it to actually block merges on `LIED` verdicts.
+
+### 6. Open the analytics dashboard *(optional)*
 
 From the repo root:
 
