@@ -1079,7 +1079,7 @@ IMPORTANT: When task status changes, remember to call the `update_todo_list` too
 375 | 
 376 | ---
 377 | 
-378 | ## 6. Working with Claude Code / Bob on this build
+378 | ## 6. Working with Bob on this build
 379 | 
 380 | Practical notes from someone about to be ironically reliant on AI agents to ship a tool that catches AI agents lying:
 381 | 
@@ -1131,7 +1131,7 @@ IMPORTANT: When task status changes, remember to call the `update_todo_list` too
  20 | 
  21 | ### Neel — Core engine
  22 | 
- 23 | Neel owns the internal spine of verdict — the foundation everyone else's checks plug into, and the dynamic tracer that makes the demo a showstopper. Heavy Claude Code work with crisp specs.
+ 23 | Neel owns the internal spine of verdict — the foundation everyone else's checks plug into, and the dynamic tracer that makes the demo a showstopper. Heavy planning work with crisp specs.
  24 | 
  25 | - **P0.1** Foundation: diff parser + AST helpers
  26 | - **P0.4** CLI + scorecard plumbing
