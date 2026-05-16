@@ -1,6 +1,9 @@
 """Scorecard construction and formatting for verdict."""
 
 import json
+from collections import Counter
+
+import click
 
 from verdict.types import Finding, Scorecard, VerdictLevel
 
@@ -92,20 +95,26 @@ def build_scorecard(findings: list[Finding], summary: dict) -> Scorecard:
         if any(f["confidence"] > 0.8 for f in findings):
             verdict = "LIED"
 
+    # Sort findings: confidence descending, then kind, file, line ascending
+    sorted_findings = sorted(
+        findings,
+        key=lambda f: (-f["confidence"], f["kind"], f["file"], f["line"]),
+    )
+
     return {
         "verdict": verdict,
-        "findings": findings,
+        "findings": sorted_findings,
         "summary": summary,
     }
 
 
 def format_terminal(scorecard: Scorecard) -> str:
-    """Format scorecard for terminal output (plain text, no colors yet).
+    """Format scorecard for terminal output with colors and kind breakdown.
 
     Layout:
-    - Verdict line: "Verdict: LIED" / "SUSPICIOUS" / "PASS"
-    - Summary stats from scorecard["summary"]
-    - One line per finding: "file:line - message (confidence: X.XX)"
+    - Verdict line: "Verdict: LIED" / "SUSPICIOUS" / "PASS" (colored)
+    - Summary stats from scorecard["summary"] with per-kind breakdown
+    - One line per finding: "file:line - message (confidence: X.XX)" (confidence colored)
 
     Args:
         scorecard: Scorecard dict with verdict, findings, summary
@@ -115,14 +124,31 @@ def format_terminal(scorecard: Scorecard) -> str:
     """
     lines = []
 
-    # Verdict line
-    lines.append(f"Verdict: {scorecard['verdict']}")
+    # Verdict line with colored verdict word
+    verdict = scorecard["verdict"]
+    if verdict == "LIED":
+        colored_verdict = click.style("LIED", fg="red", bold=True)
+    elif verdict == "SUSPICIOUS":
+        colored_verdict = click.style("SUSPICIOUS", fg="yellow", bold=True)
+    else:  # PASS
+        colored_verdict = click.style("PASS", fg="green", bold=True)
+    lines.append(f"Verdict: {colored_verdict}")
     lines.append("")
 
     # Summary section
     summary = scorecard["summary"]
     lines.append("Summary:")
     lines.append(f"  Total findings: {summary.get('total_findings', 0)}")
+    
+    # Add per-kind breakdown if findings exist
+    findings = scorecard["findings"]
+    if findings:
+        kind_counts = Counter(f["kind"] for f in findings)
+        # Sort by count descending, then alphabetically
+        sorted_kinds = sorted(kind_counts.items(), key=lambda x: (-x[1], x[0]))
+        for kind, count in sorted_kinds:
+            lines.append(f"    {kind}: {count}")
+    
     if "checks_run" in summary:
         lines.append(f"  Checks run: {summary['checks_run']}")
     if "checks_failed" in summary:
@@ -130,13 +156,23 @@ def format_terminal(scorecard: Scorecard) -> str:
     lines.append(f"  Diff range: {summary.get('diff_range', 'HEAD')}")
     lines.append("")
 
-    # Findings section
-    if scorecard["findings"]:
+    # Findings section with colored confidence
+    if findings:
         lines.append("Findings:")
-        for finding in scorecard["findings"]:
+        for finding in findings:
             file_loc = f"{finding['file']}:{finding['line']}"
-            confidence = f"(confidence: {finding['confidence']:.2f})"
-            lines.append(f"  {file_loc} - {finding['message']} {confidence}")
+            conf_value = finding["confidence"]
+            conf_text = f"(confidence: {conf_value:.2f})"
+            
+            # Color confidence by band
+            if conf_value > 0.8:
+                colored_conf = click.style(conf_text, fg="red")
+            elif conf_value >= 0.5:
+                colored_conf = click.style(conf_text, fg="yellow")
+            else:
+                colored_conf = click.style(conf_text, fg="green")
+            
+            lines.append(f"  {file_loc} - {finding['message']} {colored_conf}")
     else:
         lines.append("No findings.")
 
