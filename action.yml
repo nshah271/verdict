@@ -20,9 +20,9 @@ inputs:
     required: false
     default: 'true'
   github-token:
-    description: 'Token for posting PR comments. Defaults to ${{ github.token }}.'
+    description: 'Token for posting PR comments. Leave unset to use github.token.'
     required: false
-    default: ${{ github.token }}
+    default: ''
 
 runs:
   using: 'composite'
@@ -62,7 +62,9 @@ runs:
       if: ${{ inputs.comment-on-pr == 'true' && github.event_name == 'pull_request' }}
       shell: bash
       env:
-        GH_TOKEN: ${{ inputs.github-token }}
+        # `${{ github.* }}` is not allowed in input defaults, so fall back
+        # to the workflow-scoped token here instead.
+        GH_TOKEN: ${{ inputs.github-token != '' && inputs.github-token || github.token }}
         REPO: ${{ github.repository }}
         PR_NUMBER: ${{ github.event.pull_request.number }}
         HEAD_SHA: ${{ github.event.pull_request.head.sha }}
