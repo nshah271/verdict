@@ -5,15 +5,21 @@ This module provides the command-line interface for verdict, including:
 - verdict mcp install: Install the MCP server into Bob's configuration
 """
 
+import importlib
 import json
 import os
+import pkgutil
 import platform
 import sys
 from pathlib import Path
 
 import click
 
-from verdict.types import Scorecard
+import verdict.checks
+from verdict.ast_utils import get_added_functions
+from verdict.diff import get_changed_files
+from verdict.report import build_scorecard, format_json, format_terminal
+from verdict.types import Check, Scorecard
 
 
 def get_mcp_config_path() -> Path:
@@ -110,30 +116,103 @@ def install_mcp_server() -> None:
         sys.exit(1)
 
 
-def run_checks(repo_path: str, diff_range: str = "HEAD", static_only: bool = False) -> Scorecard:
-    """Run verdict checks and return scorecard.
+def discover_checks() -> list[Check]:
+    """Discover check modules via pkgutil.iter_modules.
 
-    This is a placeholder implementation that will be replaced by P0.4.
-    For now, it returns a minimal PASS scorecard.
+    Walks verdict.checks.__path__, imports each module,
+    extracts module-level 'check' attribute.
+
+    Prints warning to stderr if module lacks 'check' attribute.
+
+    Returns:
+        List of Check protocol objects
+    """
+    checks: list[Check] = []
+
+    for module_info in pkgutil.iter_modules(verdict.checks.__path__):
+        module_name = f"verdict.checks.{module_info.name}"
+        try:
+            module = importlib.import_module(module_name)
+            if hasattr(module, "check"):
+                checks.append(module.check)
+            else:
+                print(
+                    f"Warning: {module_name} has no 'check' attribute",
+                    file=sys.stderr,
+                )
+        except Exception as e:
+            print(
+                f"Warning: Failed to import {module_name}: {e}",
+                file=sys.stderr,
+            )
+
+    return checks
+
+
+def run_checks(
+    repo_path: str,
+    diff_range: str = "HEAD",
+    static_only: bool = False,
+    dynamic_only: bool = False,
+) -> Scorecard:
+    """Run verdict checks and return scorecard.
 
     Args:
         repo_path: Path to the git repository to audit
         diff_range: Git diff range to audit (default: "HEAD")
         static_only: If True, run only static checks (no test execution)
+        dynamic_only: If True, run only dynamic checks
 
     Returns:
         Scorecard with verdict, findings, and summary
+
+    Raises:
+        ValueError: If both static_only and dynamic_only are True
     """
-    # Placeholder implementation - will be replaced by P0.4
-    return {
-        "verdict": "PASS",
-        "findings": [],
-        "summary": {
-            "total_findings": 0,
-            "static_only": static_only,
-            "diff_range": diff_range,
-        },
+    # Validate flags
+    if static_only and dynamic_only:
+        raise ValueError("Cannot specify both static_only and dynamic_only")
+
+    # Get changed files and added functions
+    changed_files = get_changed_files(diff_range, repo_root=repo_path)
+    added_functions = get_added_functions(changed_files, repo_root=repo_path)
+
+    # Discover and filter checks
+    all_checks = discover_checks()
+    checks_to_run = []
+    for check in all_checks:
+        if static_only and check.kind != "static":
+            continue
+        if dynamic_only and check.kind != "dynamic":
+            continue
+        checks_to_run.append(check)
+
+    # Run checks and collect findings
+    findings = []
+    checks_failed = 0
+    for check in checks_to_run:
+        try:
+            check_findings = check.run(repo_path, added_functions)
+            findings.extend(check_findings)
+        except Exception as e:
+            checks_failed += 1
+            print(
+                f"Warning: Check '{check.name}' failed: {type(e).__name__}: {e}",
+                file=sys.stderr,
+            )
+
+    # Build summary
+    summary = {
+        "total_findings": len(findings),
+        "static_only": static_only,
+        "dynamic_only": dynamic_only,
+        "diff_range": diff_range,
+        "checks_run": len(checks_to_run),
+        "checks_failed": checks_failed,
     }
+
+    # Build and return scorecard
+    return build_scorecard(findings, summary)
 
 
 @click.group()
@@ -154,18 +233,59 @@ def cli() -> None:
     is_flag=True,
     help="Run only static checks (no test execution)",
 )
-def run(repo_path: str, diff_range: str, static_only: bool) -> None:
+@click.option(
+    "--dynamic-only",
+    is_flag=True,
+    help="Run only dynamic checks",
+)
+@click.option(
+    "--json",
+    "output_json",
+    is_flag=True,
+    help="Output JSON to stdout instead of terminal format",
+)
+@click.option(
+    "--fail-on",
+    type=click.Choice(["suspicious", "lied"]),
+    help="Exit 1 if verdict matches or is worse",
+)
+def run(
+    repo_path: str,
+    diff_range: str,
+    static_only: bool,
+    dynamic_only: bool,
+    output_json: bool,
+    fail_on: str,
+) -> None:
     """Run verdict checks on a git diff.
 
-    This is a placeholder implementation that will be replaced by P0.4.
+    REPO_PATH: Path to the git repository (default: current directory)
     """
-    click.echo(f"Running verdict on {repo_path} (diff: {diff_range})")
-    if static_only:
-        click.echo("Mode: static checks only")
+    # Run checks
+    try:
+        scorecard = run_checks(repo_path, diff_range, static_only, dynamic_only)
+    except ValueError as e:
+        click.echo(f"Error: {e}", err=True)
+        sys.exit(1)
 
-    scorecard = run_checks(repo_path, diff_range, static_only)
-    click.echo(f"\nVerdict: {scorecard['verdict']}")
-    click.echo(f"Findings: {len(scorecard['findings'])}")
+    # Write JSON report to file
+    report_path = Path(repo_path) / "verdict-report.json"
+    report_path.write_text(format_json(scorecard))
+
+    # Output to stdout
+    if output_json:
+        click.echo(format_json(scorecard))
+    else:
+        click.echo(format_terminal(scorecard))
+
+    # Apply fail-on logic
+    verdict = scorecard["verdict"]
+    if fail_on == "lied" and verdict == "LIED":
+        sys.exit(1)
+    elif fail_on == "suspicious" and verdict in ("SUSPICIOUS", "LIED"):
+        sys.exit(1)
+    else:
+        sys.exit(0)
 
 
 @cli.command()

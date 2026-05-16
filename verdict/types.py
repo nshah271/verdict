@@ -44,7 +44,6 @@ class Check(Protocol):
     """All checks implement this interface."""
 
     name: str
+    kind: Literal["static", "dynamic"]
 
-    def run(
-        self, diff_root: str, added_functions: list[AddedFunction]
-    ) -> list[Finding]: ...
+    def run(self, diff_root: str, added_functions: list[AddedFunction]) -> list[Finding]: ...
