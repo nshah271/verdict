@@ -1,0 +1,28 @@
+{
+  "findings": [
+    {
+      "confidence": 0.85,
+      "file": "verdict/checks/dead_functions.py",
+      "kind": "hallucinated_api",
+      "line": 113,
+      "message": "no attribute 'read_text' on Generator"
+    },
+    {
+      "confidence": 0.85,
+      "file": "verdict/checks/dead_functions.py",
+      "kind": "hallucinated_api",
+      "line": 121,
+      "message": "no attribute 'relative_to' on Generator"
+    }
+  ],
+  "summary": {
+    "checks_failed": 0,
+    "checks_run": 5,
+    "checks_timed_out": 0,
+    "diff_range": "c7e6e798b48ca3c5c2a1f55edcda6837b5d56fef..c219a5335454f76a2901fab5fccfc21b12ee93c6",
+    "dynamic_only": false,
+    "static_only": true,
+    "total_findings": 2
+  },
+  "verdict": "LIED"
+}

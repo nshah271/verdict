@@ -1,0 +1,112 @@
+{
+  "findings": [
+    {
+      "confidence": 0.7,
+      "file": "tests/test_bob_integration.py",
+      "kind": "vacuous_test",
+      "line": 21,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/test_bob_integration.py",
+      "kind": "vacuous_test",
+      "line": 29,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/test_bob_integration.py",
+      "kind": "vacuous_test",
+      "line": 37,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/test_bob_integration.py",
+      "kind": "vacuous_test",
+      "line": 46,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/test_bob_integration.py",
+      "kind": "vacuous_test",
+      "line": 61,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/test_bob_integration.py",
+      "kind": "vacuous_test",
+      "line": 82,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/test_bob_integration.py",
+      "kind": "vacuous_test",
+      "line": 97,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/test_bob_integration.py",
+      "kind": "vacuous_test",
+      "line": 116,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/test_bob_integration.py",
+      "kind": "vacuous_test",
+      "line": 133,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/test_bob_integration.py",
+      "kind": "vacuous_test",
+      "line": 158,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/test_bob_integration.py",
+      "kind": "vacuous_test",
+      "line": 183,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/test_bob_integration.py",
+      "kind": "vacuous_test",
+      "line": 208,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/test_bob_integration.py",
+      "kind": "vacuous_test",
+      "line": 232,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/test_bob_integration.py",
+      "kind": "vacuous_test",
+      "line": 239,
+      "message": "test does not call any new function"
+    }
+  ],
+  "summary": {
+    "checks_failed": 0,
+    "checks_run": 5,
+    "checks_timed_out": 0,
+    "diff_range": "1bdb6717680a09900e9d519a2e6898b3aa09cadd..913e9183d0bf4a048297e5f25fb65dd1302b4fa6",
+    "dynamic_only": false,
+    "static_only": true,
+    "total_findings": 14
+  },
+  "verdict": "SUSPICIOUS"
+}

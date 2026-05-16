@@ -1,0 +1,21 @@
+{
+  "findings": [
+    {
+      "confidence": 0.9,
+      "file": "verdict/mcp_server.py",
+      "kind": "dead_function",
+      "line": 306,
+      "message": "entrypoint() is never referenced in the repo"
+    }
+  ],
+  "summary": {
+    "checks_failed": 0,
+    "checks_run": 5,
+    "checks_timed_out": 0,
+    "diff_range": "f748bd60f16e5e1bf2d106881422de1214c774f0..71bb5dcc75e465d551457f46c9f66b88d97a5675",
+    "dynamic_only": false,
+    "static_only": true,
+    "total_findings": 1
+  },
+  "verdict": "LIED"
+}

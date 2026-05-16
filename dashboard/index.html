@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>verdict | analytics</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <header class="page-header">
+    <h1>verdict <span class="muted">/ analytics</span></h1>
+    <p class="subtitle">
+      a lie detector for AI coding agents,
+      scoring its own commit history with today's checks.
+    </p>
+    <p class="meta" id="meta">loading...</p>
+  </header>
+
+  <section class="filter-bar" aria-label="finding category filters">
+    <span class="filter-label">show findings on</span>
+    <label class="chip">
+      <input type="checkbox" id="filter-prod" checked>
+      <span>production code</span>
+      <span class="chip-count" id="count-prod">.</span>
+    </label>
+    <label class="chip">
+      <input type="checkbox" id="filter-test" checked>
+      <span>tests</span>
+      <span class="chip-count" id="count-test">.</span>
+    </label>
+    <label class="chip">
+      <input type="checkbox" id="filter-fixture" checked>
+      <span>fixtures</span>
+      <span class="chip-count" id="count-fixture">.</span>
+    </label>
+    <span class="filter-hint muted">
+      uncheck fixtures + tests to see what's wrong in production code.
+    </span>
+  </section>
+
+  <main>
+    <section class="widget trust-panel" aria-labelledby="trust-heading">
+      <h2 id="trust-heading">Trust</h2>
+      <div class="trust-grid">
+        <div class="hero">
+          <div class="hero-number" id="total-findings">.</div>
+          <div class="hero-label">
+            total findings caught<br>
+            <span class="muted">across <span id="total-commits">.</span> commits scored</span>
+          </div>
+        </div>
+        <div class="donut-wrap">
+          <canvas id="verdict-donut"></canvas>
+          <div class="donut-legend" id="donut-legend"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="widget bar-panel" aria-labelledby="bar-heading">
+      <h2 id="bar-heading">Lie type breakdown</h2>
+      <p class="hint">
+        which categories of bluff show up most across the corpus.
+      </p>
+      <div class="bar-wrap">
+        <canvas id="kind-bar"></canvas>
+      </div>
+    </section>
+
+    <section class="widget board-panel" aria-labelledby="check-board-heading">
+      <h2 id="check-board-heading">Per-check leaderboard</h2>
+      <p class="hint">
+        each check's fire count + average and max confidence.
+        helps spot which checks are pulling the most weight
+        and which might be over-firing.
+      </p>
+      <table class="board" id="check-board">
+        <thead>
+          <tr><th>check</th><th class="num">fires</th><th class="num">avg conf</th><th class="num">max conf</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <section class="widget board-panel" aria-labelledby="file-board-heading">
+      <h2 id="file-board-heading">Files with the most findings</h2>
+      <p class="hint">
+        top 10 files by finding count. click to open on github.
+      </p>
+      <table class="board" id="file-board">
+        <thead>
+          <tr><th>file</th><th class="num">findings</th><th class="num">worst conf</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <section class="widget timeline-panel" aria-labelledby="timeline-heading">
+      <h2 id="timeline-heading">Commit timeline</h2>
+      <p class="hint">
+        oldest left, newest right. dot color = verdict. hover for a summary,
+        click to drill into the full findings list.
+      </p>
+      <div class="timeline-wrap" id="timeline-wrap">
+        <svg id="timeline" role="img" aria-label="commit timeline"></svg>
+        <div class="timeline-tooltip" id="timeline-tooltip" hidden></div>
+      </div>
+    </section>
+
+    <details class="honesty">
+      <summary>known noise in this dataset</summary>
+      <p>
+        verdict is honest about its own false positives. the corpus
+        you're looking at contains real findings produced by today's
+        checks running on older commits. some of them are noise we
+        already know about:
+      </p>
+      <ul>
+        <li>
+          <code>hallucinated_api</code> can fire on <code>MagicMock</code> receivers
+          and certain <code>pathlib</code> / <code>ast</code> inferences in commits
+          before PR #20. (jedi resolves <code>Path</code> as <code>PurePath</code>,
+          which lacks <code>write_text</code> / <code>read_text</code>.)
+        </li>
+        <li>
+          <code>coverage_delta</code> over-counts comment-only diff lines, inflating
+          its denominator.
+        </li>
+        <li>
+          <code>vacuous_tests</code> heuristic D over-fires on legitimate helper tests
+          that happen not to call any newly-added function.
+        </li>
+        <li>
+          <code>tests/fixtures/*</code> files are intentionally-bad code written so a
+          check has something to detect. verdict flagging them is correct,
+          just embarrassing-looking. use the fixture filter above to exclude.
+        </li>
+      </ul>
+      <p class="muted">
+        these are not pre-filtered from the charts. use the toggles above
+        to slice the corpus the way you want to read it.
+      </p>
+    </details>
+  </main>
+
+  <footer class="page-footer">
+    <p class="muted">
+      static site, no backend. data in
+      <code>dashboard/data/*.json</code>, rebuild with
+      <code>verdict dashboard</code>.
+    </p>
+  </footer>
+
+  <aside id="drilldown" class="drilldown" hidden aria-label="commit drilldown" role="dialog">
+    <div class="drilldown-header">
+      <div class="drilldown-meta">
+        <a id="dd-sha" href="#" target="_blank" rel="noopener" class="dd-sha">.</a>
+        <span id="dd-verdict" class="dd-verdict">.</span>
+      </div>
+      <button type="button" id="dd-close" class="dd-close" aria-label="close">&times;</button>
+    </div>
+    <h3 id="dd-subject" class="dd-subject">.</h3>
+    <p id="dd-author" class="dd-author muted">.</p>
+    <p id="dd-summary" class="dd-summary muted">.</p>
+    <ol id="dd-findings" class="dd-findings"></ol>
+  </aside>
+  <div id="drilldown-backdrop" class="drilldown-backdrop" hidden></div>
+
+  <div id="error-banner" class="error-banner" hidden></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

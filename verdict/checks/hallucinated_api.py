@@ -72,6 +72,211 @@ def _collect_attributes_in_range(
     return attributes
 
 
+# Jedi systematically resolves some receivers to a base class that's
+# narrower than the real runtime type. The classic case is pathlib: any
+# Path / str expression returns PurePath even though the operands are
+# Path, so calls like file_path.read_text() infer as missing. Real code
+# almost always means Path. When we see Jedi report one of these
+# "lazy base" types, probe the upgrade target before firing.
+#
+# Each value names the class to probe instead. Add new entries when a
+# similar systematic under-reporting shows up in another library.
+_PURE_PATH_NAMES = {"PurePath", "PurePosixPath", "PureWindowsPath"}
+
+
+def _upgrade_target(full_name: str) -> str | None:
+    """Map a Jedi-reported type to the likely-real subclass, if any."""
+    if not full_name:
+        return None
+    # pathlib in Python 3.13+ ships classes under pathlib._local; older
+    # versions ship them under pathlib. Match the leaf class name and
+    # require the module to start with "pathlib" so we don't catch
+    # someone's local PurePath.
+    parts = full_name.rsplit(".", 1)
+    if len(parts) != 2:
+        return None
+    module, leaf = parts
+    if leaf in _PURE_PATH_NAMES and module.split(".")[0] == "pathlib":
+        return "pathlib.Path"
+    return None
+
+
+def _attr_exists_on_upgraded_type(
+    receiver_names: list,
+    attr_name: str,
+    cache: dict[str, set[str] | None],
+) -> bool:
+    """Probe the likely runtime subclass when Jedi resolves to a too-narrow base.
+
+    Used after the main Jedi inference has failed to find ``attr_name`` on
+    the receiver. Returns True only when the attribute exists on the
+    upgrade target, so legitimate typos like ``path.totaly_made_up()``
+    still fire.
+    """
+    for name in receiver_names:
+        try:
+            full = name.full_name
+        except Exception:
+            continue
+        upgraded = _upgrade_target(full)
+        if not upgraded:
+            continue
+        attrs = _attrs_on_qualified_type(upgraded, cache)
+        if attrs and attr_name in attrs:
+            return True
+    return False
+
+
+def _collect_isinstance_targets(test_expr: ast.expr) -> dict[str, list[ast.expr]]:
+    """Walk an ``if`` test expression and pull out isinstance narrowings.
+
+    Recurses into ``and`` chains so ``isinstance(x, A) and isinstance(y, B)``
+    narrows both. Skips ``or`` / ``not`` since those don't strengthen the type
+    inside the if body.
+
+    Returns ``{receiver_text: [type_expr, ...]}``. ``receiver_text`` is the
+    unparsed form of the first isinstance arg (``"node"`` or ``"node.value"``).
+    ``type_expr`` is the raw AST of the second arg, kept so we can later
+    expand tuple forms and infer each element via Jedi.
+    """
+    out: dict[str, list[ast.expr]] = {}
+
+    def _visit(e: ast.expr) -> None:
+        if isinstance(e, ast.Call):
+            if (
+                isinstance(e.func, ast.Name)
+                and e.func.id == "isinstance"
+                and len(e.args) == 2
+            ):
+                try:
+                    receiver_text = ast.unparse(e.args[0])
+                except Exception:
+                    return
+                out.setdefault(receiver_text, []).append(e.args[1])
+            return
+        if isinstance(e, ast.BoolOp) and isinstance(e.op, ast.And):
+            for v in e.values:
+                _visit(v)
+
+    _visit(test_expr)
+    return out
+
+
+def _build_narrowing_map(tree: ast.AST) -> dict[int, list[ast.expr]]:
+    """Map ``id(ast.Attribute)`` to the list of isinstance type-arg expressions
+    that narrow its receiver in any enclosing ``if`` block.
+
+    Walks every ``If`` node, gathers its isinstance narrowings, then walks
+    that if's body (not elif/else) and tags every Attribute whose unparsed
+    receiver matches a narrowed receiver. Nested ifs naturally compose
+    because the outer walk descends into the inner if's body.
+    """
+    narrowed: dict[int, list[ast.expr]] = {}
+
+    for if_node in ast.walk(tree):
+        if not isinstance(if_node, ast.If):
+            continue
+        targets_by_receiver = _collect_isinstance_targets(if_node.test)
+        if not targets_by_receiver:
+            continue
+        for body_stmt in if_node.body:
+            for sub in ast.walk(body_stmt):
+                if not isinstance(sub, ast.Attribute):
+                    continue
+                try:
+                    receiver_text = ast.unparse(sub.value)
+                except Exception:
+                    continue
+                if receiver_text in targets_by_receiver:
+                    narrowed.setdefault(id(sub), []).extend(
+                        targets_by_receiver[receiver_text]
+                    )
+
+    return narrowed
+
+
+def _attrs_on_qualified_type(
+    full_name: str, cache: dict[str, set[str] | None]
+) -> set[str] | None:
+    """Return the set of instance attribute names visible on ``full_name``.
+
+    Builds a tiny synthetic Jedi script ``import M; _v: full_name; _v.`` and
+    asks Jedi to complete after ``_v.``. Catches instance attributes and
+    inherited members, which the simpler ``Name.defined_names()`` misses.
+
+    Returns ``None`` if the type can't be resolved (we then fall back to
+    conservative suppression so we don't fabricate findings).
+    """
+    if full_name in cache:
+        return cache[full_name]
+
+    try:
+        module = full_name.split(".", 1)[0]
+        synthetic = f"import {module}\n_v: {full_name}\n_v."
+        synth_script = jedi.Script(synthetic)
+        comps = synth_script.complete(3, 3)
+        attrs = {c.name for c in comps} if comps else None
+    except Exception:
+        attrs = None
+
+    cache[full_name] = attrs
+    return attrs
+
+
+def _attr_exists_on_narrowed_types(
+    script,
+    narrowing_type_exprs: list[ast.expr],
+    attr_name: str,
+    cache: dict[str, set[str] | None],
+) -> bool | None:
+    """Decide if ``attr_name`` exists on every type the receiver is narrowed to.
+
+    For each isinstance type-arg in ``narrowing_type_exprs`` (which can be a
+    single class or a ``(A, B)`` tuple), resolve to one or more concrete types
+    via Jedi, then check ``attr_name`` against the attribute set of each.
+
+    Returns:
+        ``True``  if ``attr_name`` is present on every type in every narrowing
+                  (this is a false positive, suppress).
+        ``False`` if it's missing on at least one type (real bug, fire).
+        ``None``  if any type resolution failed (suppress conservatively,
+                  matches the lazy fallback).
+    """
+    for type_expr in narrowing_type_exprs:
+        # Expand `isinstance(x, (A, B))` to the individual type exprs
+        if isinstance(type_expr, ast.Tuple):
+            elts = type_expr.elts
+        else:
+            elts = [type_expr]
+
+        for elt in elts:
+            try:
+                type_refs = script.infer(elt.end_lineno, elt.end_col_offset)
+            except Exception:
+                return None
+            if not type_refs:
+                return None
+
+            elt_ok = False
+            for tref in type_refs:
+                try:
+                    full = tref.full_name
+                except Exception:
+                    full = None
+                if not full:
+                    return None
+                attrs = _attrs_on_qualified_type(full, cache)
+                if attrs is None:
+                    return None
+                if attr_name in attrs:
+                    elt_ok = True
+                    break
+            if not elt_ok:
+                return False
+
+    return True
+
+
 def _should_suppress(receiver_names: list, attr_name: str) -> bool:
     """Check if an attribute should be suppressed from checking.
 
@@ -207,10 +412,32 @@ class HallucinatedApiCheck:
                 # Collect all Attribute nodes within added function ranges
                 attributes = _collect_attributes_in_range(tree, line_ranges)
 
+                # Pre-compute isinstance narrowings for the whole file so we
+                # can suppress findings on attribute accesses inside guards
+                # like `if isinstance(node, ast.Assign): node.value`.
+                narrowing_map = _build_narrowing_map(tree)
+                attr_cache: dict[str, set[str] | None] = {}
+
                 # Check each attribute
                 for attr_node, line, _col in attributes:
                     try:
                         attr_name = attr_node.attr
+
+                        # If the receiver is isinstance-narrowed in an
+                        # enclosing if, prefer the narrowed type's
+                        # attribute set over Jedi's broader inference.
+                        narrowing_types = narrowing_map.get(id(attr_node))
+                        if narrowing_types is not None:
+                            narrowed_result = _attr_exists_on_narrowed_types(
+                                script, narrowing_types, attr_name, attr_cache
+                            )
+                            if narrowed_result is True or narrowed_result is None:
+                                # Exists on every narrowed type (FP) or we
+                                # can't tell (be conservative, don't fire).
+                                continue
+                            # False: attribute missing on at least one type.
+                            # Fall through so the existing Jedi check fires
+                            # the finding the normal way.
 
                         # Resolve receiver type at the end of the receiver expression
                         receiver_line = attr_node.value.end_lineno
@@ -232,6 +459,15 @@ class HallucinatedApiCheck:
                         attr_inferences = script.infer(attr_node.end_lineno, attr_col)
                         if attr_inferences:
                             continue  # attribute exists, no finding
+
+                        # Jedi sometimes resolves Path as PurePath (etc.) and
+                        # then can't find write_text/read_text/exists. Probe
+                        # the likely subclass before firing so we don't
+                        # fabricate findings on perfectly valid pathlib usage.
+                        if _attr_exists_on_upgraded_type(
+                            receiver_names, attr_name, attr_cache
+                        ):
+                            continue
 
                         # Attribute doesn't exist, emit a finding
                         receiver_type = _get_receiver_type_name(receiver_names)

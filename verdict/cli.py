@@ -463,6 +463,104 @@ def bob_mode_install() -> None:
     install_bob_mode()
 
 
+@cli.command()
+@click.option("--no-backfill", is_flag=True, help="Skip backfill, serve existing data only.")
+@click.option("-n", "--count", type=int, default=None, help="How many commits to score.")
+@click.option("--branch", default=None, help="Branch to walk with --first-parent.")
+@click.option(
+    "--static-only/--no-static-only",
+    default=None,
+    help="Run only static checks. Default: yes (dynamic checks flake on old commits).",
+)
+@click.option("--force", is_flag=True, help="Re-score commits already cached in data/.")
+@click.option("--no-open", is_flag=True, help="Don't auto-open the browser.")
+@click.option("--port", type=int, default=8765, help="Port to serve dashboard on.")
+def dashboard(
+    no_backfill: bool,
+    count: int | None,
+    branch: str | None,
+    static_only: bool | None,
+    force: bool,
+    no_open: bool,
+    port: int,
+) -> None:
+    """Run backfill and open the verdict analytics dashboard.
+
+    Walks the verdict repo's git history, scores each commit, writes
+    dashboard/data/<sha>.json, then serves dashboard/ on a local HTTP
+    port and pops it in a browser. Press Ctrl+C to stop.
+    """
+    from verdict.dashboard_cmd import run_backfill, serve_and_open
+
+    repo_path = Path.cwd()
+    dashboard_dir = repo_path / "dashboard"
+    data_dir = dashboard_dir / "data"
+
+    if not dashboard_dir.exists():
+        click.echo(
+            f"Error: {dashboard_dir} does not exist. Run this from the verdict repo root.",
+            err=True,
+        )
+        sys.exit(1)
+
+    backfill_args_passed = (
+        count is not None or branch is not None or static_only is not None or force
+    )
+
+    if no_backfill:
+        do_backfill = False
+    elif backfill_args_passed:
+        do_backfill = True
+    else:
+        do_backfill = click.confirm("Backfill commits?", default=True)
+
+    if do_backfill:
+        if count is None:
+            count = click.prompt("How many commits to score?", default=30, type=int)
+        if branch is None:
+            branch = click.prompt("Branch to walk?", default="main")
+        if static_only is None:
+            include_dynamic = click.confirm(
+                "Include dynamic checks (slower, may flake on old commits)?",
+                default=False,
+            )
+            static_only = not include_dynamic
+        if not force and data_dir.exists() and any(data_dir.glob("*.json")):
+            force = click.confirm("Re-score commits already in data/?", default=False)
+
+        click.echo(f"\nBackfilling {count} commits from {branch}...")
+
+        def _progress(i: int, total: int, sha: str, subject: str, verdict: str, n: int) -> None:
+            short = sha[:7]
+            if len(subject) > 60:
+                subject = subject[:57] + "..."
+            click.echo(
+                f"  [{i:>2}/{total}] {short} {subject:<60}  {verdict:<11} {n:>3} findings"
+            )
+
+        try:
+            run_backfill(
+                str(repo_path),
+                n=count,
+                branch=branch,
+                static_only=static_only,
+                force=force,
+                progress=_progress,
+            )
+        except RuntimeError as e:
+            click.echo(f"Error: {e}", err=True)
+            sys.exit(1)
+    else:
+        if not (data_dir.exists() and any(data_dir.glob("*.json"))):
+            click.echo(
+                "Error: no data in dashboard/data/. Run without --no-backfill first.",
+                err=True,
+            )
+            sys.exit(1)
+
+    serve_and_open(dashboard_dir, port=port, open_browser=not no_open)
+
+
 if __name__ == "__main__":
     cli()
 

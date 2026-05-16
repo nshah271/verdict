@@ -1,0 +1,77 @@
+{
+  "findings": [
+    {
+      "confidence": 0.9,
+      "file": "tests/test_cli.py",
+      "kind": "vacuous_test",
+      "line": 229,
+      "message": "test has no assertions"
+    },
+    {
+      "confidence": 0.9,
+      "file": "tests/test_cli.py",
+      "kind": "vacuous_test",
+      "line": 252,
+      "message": "test has no assertions"
+    },
+    {
+      "confidence": 0.9,
+      "file": "tests/test_cli.py",
+      "kind": "vacuous_test",
+      "line": 294,
+      "message": "test has no assertions"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/test_cli.py",
+      "kind": "vacuous_test",
+      "line": 223,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/test_cli.py",
+      "kind": "vacuous_test",
+      "line": 229,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/test_cli.py",
+      "kind": "vacuous_test",
+      "line": 246,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/test_cli.py",
+      "kind": "vacuous_test",
+      "line": 252,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/test_cli.py",
+      "kind": "vacuous_test",
+      "line": 281,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/test_cli.py",
+      "kind": "vacuous_test",
+      "line": 294,
+      "message": "test does not call any new function"
+    }
+  ],
+  "summary": {
+    "checks_failed": 0,
+    "checks_run": 5,
+    "checks_timed_out": 0,
+    "diff_range": "df55e9c8ac8dd0009a7d73296b82b157031b4184..3181095b0c6829b1231336c25c3b8ca842cfa880",
+    "dynamic_only": false,
+    "static_only": true,
+    "total_findings": 9
+  },
+  "verdict": "LIED"
+}

@@ -1,0 +1,28 @@
+{
+  "findings": [
+    {
+      "confidence": 0.85,
+      "file": "verdict/checks/vacuous_tests.py",
+      "kind": "hallucinated_api",
+      "line": 72,
+      "message": "no attribute 'value' on stmt"
+    },
+    {
+      "confidence": 0.85,
+      "file": "verdict/checks/vacuous_tests.py",
+      "kind": "hallucinated_api",
+      "line": 77,
+      "message": "no attribute 'value' on stmt"
+    }
+  ],
+  "summary": {
+    "checks_failed": 0,
+    "checks_run": 5,
+    "checks_timed_out": 0,
+    "diff_range": "c29eaceef03d08e2fe7b96fe366324454a0abb98..f748bd60f16e5e1bf2d106881422de1214c774f0",
+    "dynamic_only": false,
+    "static_only": true,
+    "total_findings": 2
+  },
+  "verdict": "LIED"
+}
