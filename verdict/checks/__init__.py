@@ -1,3 +1,3 @@
-"""Check modules package for verdict."""
+"""Audit checks for verdict."""
 
 # Made with Bob
