@@ -140,7 +140,7 @@ Five distinct surfaces, one scorecard format:
 From anywhere:
 
 ```bash
-pip install my-verdict
+pip install myverdict
 ```
 
 Or, if you've cloned this repo and want an editable dev install:
