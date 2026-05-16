@@ -192,6 +192,11 @@ verdict --help
 verdict run --help
 ```
 
+<!-- SCREENSHOT 01: terminal after `pip install myverdict` finishes cleanly.
+     SCREENSHOT 02: `verdict --help` output showing run / mcp-install /
+                   bob-mode-install / dashboard. Drop the PNGs here as
+                   `![alt](docs/screenshots/01-*.png)`. -->
+
 ### 2. Run an audit
 
 From inside any git repository:
@@ -215,6 +220,10 @@ Verdict: SUSPICIOUS  (3 findings, 12 new functions analyzed)
 ```
 
 Verdict also writes the full report to `verdict-report.json` in the repo root. That's what the VS Code tab reads.
+
+<!-- SCREENSHOT 03: terminal showing a real `verdict run` against a repo
+                   with at least one LIED finding. The colored verdict
+                   header + per-kind summary are the star of this shot. -->
 
 ### 3. Install the Bob MCP integration *(optional)*
 
@@ -240,6 +249,11 @@ Restart Bob. You should now see:
 
 Both installers are non-destructive — they preserve existing config and merge.
 
+<!-- SCREENSHOT 04: Bob's chat mode dropdown open, with "Verifier" visible.
+     SCREENSHOT 05: Bob's slash-command picker open, with "/verify" visible.
+     SCREENSHOT 06: Bob mid-conversation calling verdict.check_diff (tool
+                   invocation card). Captures the MCP integration. -->
+
 ### 4. Install the Verdict VS Code tab
 
 A prebuilt `.vsix` ships with this repo. Three ways to install it — pick whichever is easiest:
@@ -262,6 +276,12 @@ code --install-extension verdict-vscode-0.2.0.vsix --force
 The `--force` flag overwrites any previous install of the same version. If you get `command not found: code`, the CLI isn't on PATH — open the editor, hit `Ctrl+Shift+P`, run **Shell Command: Install 'code' command in PATH**, then try again. Or just use method A or B — they don't need the shell command.
 
 After installing by any method, **reload the editor window**, then reveal the bottom panel (`Ctrl+J`) — there will be a new **Verdict** tab. Click **Run Audit** in the toolbar and the panel populates.
+
+<!-- SCREENSHOT 07: the right-click context menu in the file explorer
+                   showing "Install Extension VSIX" highlighted on the
+                   .vsix file. Optional but very clear for the demo.
+     SCREENSHOT 08: the Verdict tab populated with findings in the
+                   bottom panel. The two-pane (list + detail) view. -->
 
 If you'd rather build from source:
 
@@ -308,6 +328,10 @@ What happens after that:
 - Anyone watching the PR gets the comment in their inbox via GitHub's normal notification path — that's the "Verdict emails me my findings" experience, no SMTP setup needed.
 - The check stays **green** by default (informational). Flip `fail-on: lied` if you want it to actually block merges on `LIED` verdicts.
 
+<!-- SCREENSHOT 09: a real PR with the verdict bot comment expanded,
+                   showing the findings list + clickable file:line links.
+                   The "verdict emails me findings" punchline. -->
+
 ### 6. Open the analytics dashboard *(optional)*
 
 From the repo root:
@@ -317,6 +341,10 @@ verdict dashboard
 ```
 
 This walks the git history, scores each commit, writes one JSON per commit into `dashboard/data/`, then serves the dashboard at `http://localhost:8765` and opens your browser. First run prompts for commit count and branch; subsequent runs reuse cached scores.
+
+<!-- SCREENSHOT 10: the dashboard in a browser. Trust panel + donut at
+                   top, kind bar in middle, commit timeline at bottom.
+                   This is the visual-impact shot. -->
 
 ---
 
