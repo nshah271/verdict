@@ -1,0 +1,46 @@
+name: 'Verdict AI Code Audit'
+description: 'Static analysis tool that catches AI coding agents lying about what they implemented'
+author: 'nshah271'
+
+inputs:
+  fail-on:
+    description: 'Threshold for failure (suspicious | lied)'
+    required: false
+    default: 'lied'
+  static-only:
+    description: 'Skip dynamic checks for faster CI runs'
+    required: false
+    default: 'false'
+  diff-range:
+    description: 'Git diff range to audit'
+    required: false
+    default: 'HEAD'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Install verdict-ai
+      shell: bash
+      run: |
+        pip install verdict-ai
+    
+    - name: Run verdict audit
+      shell: bash
+      run: |
+        ARGS="--fail-on ${{ inputs.fail-on }}"
+        
+        if [ "${{ inputs.static-only }}" = "true" ]; then
+          ARGS="$ARGS --static-only"
+        fi
+        
+        if [ "${{ inputs.diff-range }}" != "HEAD" ]; then
+          ARGS="$ARGS --diff-range ${{ inputs.diff-range }}"
+        fi
+        
+        verdict run $ARGS
+
+branding:
+  icon: 'shield'
+  color: 'blue'
+
+# Made with Bob

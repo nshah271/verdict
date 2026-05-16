@@ -1,0 +1,33 @@
+# Example workflow for using Verdict AI Code Audit
+# 
+# To use this in your own repository, replace the "uses: ./" line with:
+#   uses: nshah271/verdict@main
+# 
+# This will use the published action instead of the local one.
+
+name: Verdict AI Audit
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Required for git diff to work properly
+      
+      - name: Run Verdict audit
+        uses: ./  # Replace with: nshah271/verdict@main
+        with:
+          fail-on: lied
+          # Optional: uncomment to skip dynamic checks for faster CI
+          # static-only: true
+          # Optional: specify a custom diff range
+          # diff-range: origin/main...HEAD
+
+# Made with Bob
