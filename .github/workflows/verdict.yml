@@ -1,9 +1,11 @@
 # Example workflow for using Verdict AI Code Audit
-# 
+#
 # To use this in your own repository, replace the "uses: ./" line with:
 #   uses: nshah271/verdict@main
-# 
-# This will use the published action instead of the local one.
+#
+# The action defaults to posting findings as a PR comment with deep links
+# and exiting 0 (never failing the build). Override `fail-on` to `lied`
+# or `suspicious` if you want CI to block on the audit verdict.
 
 name: Verdict AI Audit
 
@@ -11,23 +13,27 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
 
+# Needed so the action can post / edit the PR comment.
+permissions:
+  contents: read
+  pull-requests: write
+
 jobs:
   audit:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0  # Required for git diff to work properly
-      
+
       - name: Run Verdict audit
         uses: ./  # Replace with: nshah271/verdict@main
-        with:
-          fail-on: lied
-          # Optional: uncomment to skip dynamic checks for faster CI
-          # static-only: true
-          # Optional: specify a custom diff range
-          # diff-range: origin/main...HEAD
+        # Optional inputs (all have sensible defaults):
+        #   fail-on: never | suspicious | lied   (default: never)
+        #   comment-on-pr: true | false          (default: true)
+        #   static-only: true | false            (default: false)
+        #   diff-range: <any git range>          (default: origin/main...HEAD)
 
 # Made with Bob

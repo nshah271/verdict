@@ -4,9 +4,9 @@ author: 'nshah271'
 
 inputs:
   fail-on:
-    description: 'Threshold for failure (suspicious | lied)'
+    description: 'Threshold for failing the action: never | suspicious | lied'
     required: false
-    default: 'lied'
+    default: 'never'
   static-only:
     description: 'Skip dynamic checks for faster CI runs'
     required: false
@@ -15,6 +15,14 @@ inputs:
     description: 'Git diff range to audit'
     required: false
     default: 'origin/main...HEAD'
+  comment-on-pr:
+    description: 'Post findings as a PR comment with GitHub deep links'
+    required: false
+    default: 'true'
+  github-token:
+    description: 'Token for posting PR comments. Leave unset to use github.token.'
+    required: false
+    default: ''
 
 runs:
   using: 'composite'
@@ -29,15 +37,64 @@ runs:
         pip install -e "${{ github.action_path }}"
 
     - name: Run verdict audit
+      id: audit
       shell: bash
       run: |
-        ARGS="--fail-on ${{ inputs.fail-on }} --diff-range ${{ inputs.diff-range }}"
-
+        # Run without --fail-on so the action can always reach the comment
+        # step. The conditional fail step below applies the user's threshold
+        # after the comment has been posted.
+        ARGS="--diff-range ${{ inputs.diff-range }}"
         if [ "${{ inputs.static-only }}" = "true" ]; then
           ARGS="$ARGS --static-only"
         fi
 
+        # `verdict run` writes verdict-report.json to the repo root as a side
+        # effect; copy it somewhere stable so later steps can find it.
         verdict run $ARGS
+        cp verdict-report.json "$RUNNER_TEMP/verdict-report.json"
+
+        # Pull the verdict out for the conditional fail step.
+        VERDICT=$(python -c "import json; print(json.load(open('$RUNNER_TEMP/verdict-report.json'))['verdict'])")
+        echo "verdict=$VERDICT" >> "$GITHUB_OUTPUT"
+        echo "report=$RUNNER_TEMP/verdict-report.json" >> "$GITHUB_OUTPUT"
+
+    - name: Post PR comment with findings
+      if: ${{ inputs.comment-on-pr == 'true' && github.event_name == 'pull_request' }}
+      shell: bash
+      env:
+        # `${{ github.* }}` is not allowed in input defaults, so fall back
+        # to the workflow-scoped token here instead.
+        GH_TOKEN: ${{ inputs.github-token != '' && inputs.github-token || github.token }}
+        REPO: ${{ github.repository }}
+        PR_NUMBER: ${{ github.event.pull_request.number }}
+        HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        REPORT: ${{ steps.audit.outputs.report }}
+        RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+      run: |
+        python "${{ github.action_path }}/scripts/post_pr_comment.py"
+
+    - name: Apply fail-on threshold
+      if: ${{ inputs.fail-on != 'never' }}
+      shell: bash
+      run: |
+        VERDICT="${{ steps.audit.outputs.verdict }}"
+        case "${{ inputs.fail-on }}" in
+          lied)
+            if [ "$VERDICT" = "LIED" ]; then
+              echo "verdict is LIED and fail-on is lied; failing the action."
+              exit 1
+            fi
+            ;;
+          suspicious)
+            if [ "$VERDICT" = "LIED" ] || [ "$VERDICT" = "SUSPICIOUS" ]; then
+              echo "verdict is $VERDICT and fail-on is suspicious; failing the action."
+              exit 1
+            fi
+            ;;
+          *)
+            echo "unknown fail-on value '${{ inputs.fail-on }}'; treating as never."
+            ;;
+        esac
 
 branding:
   icon: 'shield'
