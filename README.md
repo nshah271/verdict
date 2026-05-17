@@ -1,5 +1,13 @@
-# Verdict
+# [!Verdict]() [Website](https://myverdict.netlify.app/)
 
+ [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+  [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+  [![MCP](https://img.shields.io/badge/MCP-server-8A2BE2.svg)](https://modelcontextprotocol.io/)
+  [![VS Code Extension](https://img.shields.io/badge/VS%20Code-extension-007ACC.svg?logo=visualstudiocode)](https://marketplace.visualstudio.com/vscode)
+  [![GitHub Action](https://img.shields.io/badge/GitHub-Action-2088FF.svg?logo=githubactions&logoColor=white)](https://github.com/features/actions)
+  [![PyPI](https://img.shields.io/badge/pypi-myverdict-3775A9.svg?logo=pypi&logoColor=white)](https://pypi.org/project/myverdict/)
+  [![Built with IBM Bob](https://img.shields.io/badge/Built%20with-IBM%20Bob-0f62fe.svg)](https://www.ibm.com/)
+ 
 **A lie detector for AI coding agents.**
 
 Verdict audits an AI-generated diff — statically *and* by tracing what actually runs when the tests execute — and returns a single scorecard:
@@ -7,10 +15,6 @@ Verdict audits an AI-generated diff — statically *and* by tracing what actuall
 > `PASS` &nbsp;·&nbsp; `SUSPICIOUS` &nbsp;·&nbsp; `LIED`
 
 Built for the **IBM Bob hackathon (May 2026)**.
-
----
-## Website
-https://myverdict.netlify.app/
 
 ---
 
