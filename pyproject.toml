@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "myverdict"
-version = "0.1.0"
+version = "0.1.1"
 description = "A lie detector for AI coding agents: audits diffs and traces what actually runs."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -40,6 +40,12 @@ verdict-mcp = "verdict.mcp_server:entrypoint"
 
 [tool.setuptools.packages.find]
 include = ["verdict*"]
+
+[tool.setuptools.package-data]
+verdict = [
+    "bob_integration/*.yaml",
+    "bob_integration/slash_commands/*.md",
+]
 
 [tool.ruff]
 line-length = 100
