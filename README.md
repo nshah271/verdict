@@ -26,8 +26,9 @@ Verdict audits an AI-generated diff, statically *and* by tracing what actually r
 
 > `PASS` &nbsp;·&nbsp; `SUSPICIOUS` &nbsp;·&nbsp; `LIED`
 
-Built for the **IBM Bob hackathon (May 2026)**.
+Built for the **IBM Bob hackathon (May 2026)**. 
 
+**Please note: BOB sessions are under ./bob_sessions/**
 ---
 
 ## Why Verdict exists
