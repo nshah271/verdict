@@ -9,6 +9,10 @@ Verdict audits an AI-generated diff — statically *and* by tracing what actuall
 Built for the **IBM Bob hackathon (May 2026)**.
 
 ---
+## Website
+https://myverdict.netlify.app/
+
+---
 
 ## Why Verdict exists
 
