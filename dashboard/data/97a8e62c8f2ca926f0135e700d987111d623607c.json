@@ -1,0 +1,231 @@
+{
+  "findings": [
+    {
+      "confidence": 0.9,
+      "file": "verdict/cli.py",
+      "kind": "dead_function",
+      "line": 445,
+      "message": "mcp_install() is never referenced in the repo"
+    },
+    {
+      "confidence": 0.9,
+      "file": "verdict/cli.py",
+      "kind": "dead_function",
+      "line": 462,
+      "message": "bob_mode_install() is never referenced in the repo"
+    },
+    {
+      "confidence": 0.9,
+      "file": "verdict/cli.py",
+      "kind": "dead_function",
+      "line": 485,
+      "message": "dashboard() is never referenced in the repo"
+    },
+    {
+      "confidence": 0.9,
+      "file": "verdict/dashboard_cmd.py",
+      "kind": "dead_function",
+      "line": 248,
+      "message": "log_message() is never referenced in the repo"
+    },
+    {
+      "confidence": 0.85,
+      "file": "scripts/post_pr_comment.py",
+      "kind": "hallucinated_api",
+      "line": 110,
+      "message": "no attribute 'stderr' on sys"
+    },
+    {
+      "confidence": 0.85,
+      "file": "scripts/post_pr_comment.py",
+      "kind": "hallucinated_api",
+      "line": 110,
+      "message": "no attribute 'stderr' on CalledProcessError"
+    },
+    {
+      "confidence": 0.85,
+      "file": "scripts/post_pr_comment.py",
+      "kind": "hallucinated_api",
+      "line": 161,
+      "message": "no attribute 'stderr' on sys"
+    },
+    {
+      "confidence": 0.85,
+      "file": "scripts/post_pr_comment.py",
+      "kind": "hallucinated_api",
+      "line": 165,
+      "message": "no attribute 'stderr' on sys"
+    },
+    {
+      "confidence": 0.85,
+      "file": "scripts/post_pr_comment.py",
+      "kind": "hallucinated_api",
+      "line": 178,
+      "message": "no attribute 'stderr' on sys"
+    },
+    {
+      "confidence": 0.85,
+      "file": "scripts/post_pr_comment.py",
+      "kind": "hallucinated_api",
+      "line": 178,
+      "message": "no attribute 'stderr' on CalledProcessError"
+    },
+    {
+      "confidence": 0.85,
+      "file": "verdict/checks/hallucinated_api.py",
+      "kind": "hallucinated_api",
+      "line": 157,
+      "message": "no attribute 'op' on expr"
+    },
+    {
+      "confidence": 0.85,
+      "file": "verdict/checks/hallucinated_api.py",
+      "kind": "hallucinated_api",
+      "line": 179,
+      "message": "no attribute 'test' on AST"
+    },
+    {
+      "confidence": 0.85,
+      "file": "verdict/checks/hallucinated_api.py",
+      "kind": "hallucinated_api",
+      "line": 182,
+      "message": "no attribute 'body' on AST"
+    },
+    {
+      "confidence": 0.85,
+      "file": "verdict/checks/hallucinated_api.py",
+      "kind": "hallucinated_api",
+      "line": 187,
+      "message": "no attribute 'value' on AST"
+    },
+    {
+      "confidence": 0.85,
+      "file": "verdict/dashboard_cmd.py",
+      "kind": "hallucinated_api",
+      "line": 57,
+      "message": "no attribute 'stdout' on CompletedProcess"
+    },
+    {
+      "confidence": 0.85,
+      "file": "verdict/dashboard_cmd.py",
+      "kind": "hallucinated_api",
+      "line": 76,
+      "message": "no attribute 'stdout' on CompletedProcess"
+    },
+    {
+      "confidence": 0.85,
+      "file": "verdict/dashboard_cmd.py",
+      "kind": "hallucinated_api",
+      "line": 207,
+      "message": "no attribute 'stdout' on CompletedProcess"
+    },
+    {
+      "confidence": 0.85,
+      "file": "verdict/dashboard_cmd.py",
+      "kind": "hallucinated_api",
+      "line": 317,
+      "message": "no attribute 'count' on Namespace"
+    },
+    {
+      "confidence": 0.85,
+      "file": "verdict/dashboard_cmd.py",
+      "kind": "hallucinated_api",
+      "line": 317,
+      "message": "no attribute 'branch' on Namespace"
+    },
+    {
+      "confidence": 0.85,
+      "file": "verdict/dashboard_cmd.py",
+      "kind": "hallucinated_api",
+      "line": 319,
+      "message": "no attribute 'repo' on Namespace"
+    },
+    {
+      "confidence": 0.85,
+      "file": "verdict/dashboard_cmd.py",
+      "kind": "hallucinated_api",
+      "line": 320,
+      "message": "no attribute 'count' on Namespace"
+    },
+    {
+      "confidence": 0.85,
+      "file": "verdict/dashboard_cmd.py",
+      "kind": "hallucinated_api",
+      "line": 321,
+      "message": "no attribute 'branch' on Namespace"
+    },
+    {
+      "confidence": 0.85,
+      "file": "verdict/dashboard_cmd.py",
+      "kind": "hallucinated_api",
+      "line": 322,
+      "message": "no attribute 'no_static_only' on Namespace"
+    },
+    {
+      "confidence": 0.85,
+      "file": "verdict/dashboard_cmd.py",
+      "kind": "hallucinated_api",
+      "line": 323,
+      "message": "no attribute 'force' on Namespace"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/test_hallucinated_api.py",
+      "kind": "vacuous_test",
+      "line": 266,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/test_hallucinated_api.py",
+      "kind": "vacuous_test",
+      "line": 283,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/test_hallucinated_api.py",
+      "kind": "vacuous_test",
+      "line": 299,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/test_hallucinated_api.py",
+      "kind": "vacuous_test",
+      "line": 318,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/test_hallucinated_api.py",
+      "kind": "vacuous_test",
+      "line": 331,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/test_hallucinated_api.py",
+      "kind": "vacuous_test",
+      "line": 349,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/test_hallucinated_api.py",
+      "kind": "vacuous_test",
+      "line": 366,
+      "message": "test does not call any new function"
+    }
+  ],
+  "summary": {
+    "checks_failed": 0,
+    "checks_run": 5,
+    "checks_timed_out": 0,
+    "diff_range": "84830c51c75ab09a03a69065963d0e9680cf7095..97a8e62c8f2ca926f0135e700d987111d623607c",
+    "dynamic_only": false,
+    "static_only": true,
+    "total_findings": 31
+  },
+  "verdict": "LIED"
+}

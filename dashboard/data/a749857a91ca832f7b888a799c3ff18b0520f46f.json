@@ -1,0 +1,182 @@
+{
+  "findings": [
+    {
+      "confidence": 0.9,
+      "file": "tests/test_bob_mode_install.py",
+      "kind": "vacuous_test",
+      "line": 13,
+      "message": "test has no assertions"
+    },
+    {
+      "confidence": 0.85,
+      "file": "tests/test_bob_mode_install.py",
+      "kind": "hallucinated_api",
+      "line": 26,
+      "message": "no attribute 'exists' on str"
+    },
+    {
+      "confidence": 0.85,
+      "file": "tests/test_bob_mode_install.py",
+      "kind": "hallucinated_api",
+      "line": 27,
+      "message": "no attribute 'exists' on str"
+    },
+    {
+      "confidence": 0.85,
+      "file": "tests/test_bob_mode_install.py",
+      "kind": "hallucinated_api",
+      "line": 35,
+      "message": "no attribute 'exists' on str"
+    },
+    {
+      "confidence": 0.85,
+      "file": "tests/test_bob_mode_install.py",
+      "kind": "hallucinated_api",
+      "line": 38,
+      "message": "no attribute 'read_text' on str"
+    },
+    {
+      "confidence": 0.85,
+      "file": "tests/test_bob_mode_install.py",
+      "kind": "hallucinated_api",
+      "line": 48,
+      "message": "no attribute 'exists' on str"
+    },
+    {
+      "confidence": 0.85,
+      "file": "tests/test_bob_mode_install.py",
+      "kind": "hallucinated_api",
+      "line": 51,
+      "message": "no attribute 'read_text' on str"
+    },
+    {
+      "confidence": 0.85,
+      "file": "tests/test_bob_mode_install.py",
+      "kind": "hallucinated_api",
+      "line": 59,
+      "message": "no attribute 'mkdir' on str"
+    },
+    {
+      "confidence": 0.85,
+      "file": "tests/test_bob_mode_install.py",
+      "kind": "hallucinated_api",
+      "line": 63,
+      "message": "no attribute 'write_text' on str"
+    },
+    {
+      "confidence": 0.85,
+      "file": "tests/test_bob_mode_install.py",
+      "kind": "hallucinated_api",
+      "line": 68,
+      "message": "no attribute 'read_text' on str"
+    },
+    {
+      "confidence": 0.85,
+      "file": "tests/test_bob_mode_install.py",
+      "kind": "hallucinated_api",
+      "line": 75,
+      "message": "no attribute 'mkdir' on str"
+    },
+    {
+      "confidence": 0.85,
+      "file": "tests/test_bob_mode_install.py",
+      "kind": "hallucinated_api",
+      "line": 79,
+      "message": "no attribute 'write_text' on str"
+    },
+    {
+      "confidence": 0.85,
+      "file": "tests/test_bob_mode_install.py",
+      "kind": "hallucinated_api",
+      "line": 84,
+      "message": "no attribute 'read_text' on str"
+    },
+    {
+      "confidence": 0.85,
+      "file": "tests/test_bob_mode_install.py",
+      "kind": "hallucinated_api",
+      "line": 95,
+      "message": "no attribute 'read_text' on str"
+    },
+    {
+      "confidence": 0.85,
+      "file": "tests/test_bob_mode_install.py",
+      "kind": "hallucinated_api",
+      "line": 96,
+      "message": "no attribute 'read_text' on str"
+    },
+    {
+      "confidence": 0.85,
+      "file": "tests/test_bob_mode_install.py",
+      "kind": "hallucinated_api",
+      "line": 102,
+      "message": "no attribute 'read_text' on str"
+    },
+    {
+      "confidence": 0.85,
+      "file": "tests/test_bob_mode_install.py",
+      "kind": "hallucinated_api",
+      "line": 103,
+      "message": "no attribute 'read_text' on str"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/test_bob_mode_install.py",
+      "kind": "vacuous_test",
+      "line": 13,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/test_bob_mode_install.py",
+      "kind": "vacuous_test",
+      "line": 19,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/test_bob_mode_install.py",
+      "kind": "vacuous_test",
+      "line": 30,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/test_bob_mode_install.py",
+      "kind": "vacuous_test",
+      "line": 43,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/test_bob_mode_install.py",
+      "kind": "vacuous_test",
+      "line": 56,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/test_bob_mode_install.py",
+      "kind": "vacuous_test",
+      "line": 71,
+      "message": "test does not call any new function"
+    },
+    {
+      "confidence": 0.7,
+      "file": "tests/test_bob_mode_install.py",
+      "kind": "vacuous_test",
+      "line": 87,
+      "message": "test does not call any new function"
+    }
+  ],
+  "summary": {
+    "checks_failed": 0,
+    "checks_run": 5,
+    "checks_timed_out": 0,
+    "diff_range": "38690c70ed18fced2fd094220708839f23c575e5..a749857a91ca832f7b888a799c3ff18b0520f46f",
+    "dynamic_only": false,
+    "static_only": true,
+    "total_findings": 24
+  },
+  "verdict": "LIED"
+}

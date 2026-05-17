@@ -11,10 +11,12 @@ import importlib
 import json
 import pkgutil
 import shutil
+import subprocess
 import sys
 from pathlib import Path
 
 import click
+import questionary
 
 import verdict.checks
 from verdict.ast_utils import get_added_functions
@@ -470,6 +472,96 @@ def bob_mode_install(is_global: bool) -> None:
     install_bob_mode(is_global=is_global)
 
 
+_CUSTOM = "Custom…"
+
+
+def _ask_yes_no(message: str, default: bool) -> bool:
+    answer = questionary.select(
+        message,
+        choices=["Yes", "No"],
+        default="Yes" if default else "No",
+    ).ask()
+    if answer is None:
+        sys.exit(130)
+    return answer == "Yes"
+
+
+def _ask_count(default: int) -> int:
+    presets = [10, 30, 50, 100]
+    choices = [str(n) for n in presets] + [_CUSTOM]
+    default_choice = str(default) if default in presets else _CUSTOM
+    answer = questionary.select(
+        "How many commits to score?", choices=choices, default=default_choice
+    ).ask()
+    if answer is None:
+        sys.exit(130)
+    if answer == _CUSTOM:
+        custom = questionary.text(
+            "Enter a number:",
+            default=str(default),
+            validate=lambda v: v.isdigit() and int(v) > 0 or "Must be a positive integer",
+        ).ask()
+        if custom is None:
+            sys.exit(130)
+        return int(custom)
+    return int(answer)
+
+
+def _list_local_branches(repo_path: Path) -> list[str]:
+    try:
+        out = subprocess.check_output(
+            ["git", "-C", str(repo_path), "branch", "--format=%(refname:short)"],
+            text=True,
+            stderr=subprocess.DEVNULL,
+        )
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        return []
+    return [line.strip() for line in out.splitlines() if line.strip()]
+
+
+def _current_branch(repo_path: Path) -> str | None:
+    try:
+        out = subprocess.check_output(
+            ["git", "-C", str(repo_path), "branch", "--show-current"],
+            text=True,
+            stderr=subprocess.DEVNULL,
+        )
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        return None
+    name = out.strip()
+    return name or None
+
+
+def _ask_branch(repo_path: Path, default: str) -> str:
+    branches = _list_local_branches(repo_path)
+    current = _current_branch(repo_path)
+
+    # Order: current first, then default if different, then the rest, then Custom.
+    ordered: list[str] = []
+    for b in (current, default):
+        if b and b in branches and b not in ordered:
+            ordered.append(b)
+    for b in branches:
+        if b not in ordered:
+            ordered.append(b)
+    if not ordered:
+        ordered = [default]
+    choices = ordered + [_CUSTOM]
+
+    default_choice = current if current in ordered else (default if default in ordered else ordered[0])
+    answer = questionary.select(
+        "Branch to walk?", choices=choices, default=default_choice
+    ).ask()
+    if answer is None:
+        sys.exit(130)
+    if answer == _CUSTOM:
+        custom = questionary.text("Enter branch name:", default=default).ask()
+        if custom is None:
+            sys.exit(130)
+        return custom.strip() or default
+    return answer
+
+
 @cli.command()
 @click.option("--no-backfill", is_flag=True, help="Skip backfill, serve existing data only.")
 @click.option("-n", "--count", type=int, default=None, help="How many commits to score.")
@@ -514,26 +606,36 @@ def dashboard(
         count is not None or branch is not None or static_only is not None or force
     )
 
+    interactive = sys.stdin.isatty() and sys.stdout.isatty()
+
     if no_backfill:
         do_backfill = False
     elif backfill_args_passed:
         do_backfill = True
+    elif interactive:
+        do_backfill = _ask_yes_no("Backfill commits?", default=True)
     else:
-        do_backfill = click.confirm("Backfill commits?", default=True)
+        do_backfill = True
 
     if do_backfill:
         if count is None:
-            count = click.prompt("How many commits to score?", default=30, type=int)
+            count = _ask_count(default=30) if interactive else 30
         if branch is None:
-            branch = click.prompt("Branch to walk?", default="main")
+            branch = _ask_branch(repo_path, default="main") if interactive else "main"
         if static_only is None:
-            include_dynamic = click.confirm(
-                "Include dynamic checks (slower, may flake on old commits)?",
-                default=False,
-            )
+            if interactive:
+                include_dynamic = _ask_yes_no(
+                    "Include dynamic checks (slower, may flake on old commits)?",
+                    default=False,
+                )
+            else:
+                include_dynamic = False
             static_only = not include_dynamic
         if not force and data_dir.exists() and any(data_dir.glob("*.json")):
-            force = click.confirm("Re-score commits already in data/?", default=False)
+            if interactive:
+                force = _ask_yes_no("Re-score commits already in data/?", default=False)
+            else:
+                force = False
 
         click.echo(f"\nBackfilling {count} commits from {branch}...")
 

@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "verdict": {
+      "command": "verdict-mcp",
+      "args": [],
+      "env": {}
+    }
+  }
+}
