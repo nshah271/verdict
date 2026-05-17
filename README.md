@@ -16,13 +16,13 @@
 
 <p align="center">
   <a href="https://myverdict.netlify.app/">
-    <img src="https://img.shields.io/badge/%E2%96%B6%20Try%20Verdict-Live%20Demo-22E37A?style=for-the-badge&labelColor=0a0f0c&logoColor=white" height="50" alt="Try Verdict — Live Demo">
+    <img src="https://img.shields.io/badge/%E2%96%B6%20Try%20Verdict-Website-22E37A?style=for-the-badge&labelColor=0a0f0c&logoColor=white" height="50" alt="Try Verdict - Website">
   </a>
 </p>
 
 **A lie detector for AI coding agents.**
 
-Verdict audits an AI-generated diff — statically *and* by tracing what actually runs when the tests execute — and returns a single scorecard:
+Verdict audits an AI-generated diff, statically *and* by tracing what actually runs when the tests execute, and returns a single scorecard:
 
 > `PASS` &nbsp;·&nbsp; `SUSPICIOUS` &nbsp;·&nbsp; `LIED`
 
@@ -36,7 +36,7 @@ AI coding agents are getting good at *looking* right. They produce diffs that co
 
 - A "fix" that adds a function nothing ever calls.
 - A new test that mocks out everything it was supposed to verify, and asserts on the mocks.
-- A call to `requests.get_json()` — a method that does not exist.
+- A call to `requests.get_json()` - a method that does not exist.
 - A claim that a file was created, but the file is not on disk.
 - A `try/except: pass` that buries the very bug the agent was asked to fix.
 - A new code path that pytest covers 0 % of, even though the test suite is "green".
@@ -57,7 +57,7 @@ Verdict runs seven independent checks on every diff. Each one targets a distinct
 | 2 | **`vacuous_tests`** | static | A test function that doesn't actually test anything. Four heuristics fire: empty body (`pass`/`...`/docstring only), no `assert` statements, mock-only assertions (only checks calls on `Mock()` objects the test itself created), or the test never reaches any newly-added code. Catches "I wrote a test for it" lies. |
 | 3 | **`hallucinated_api`** | static | A call to a method or attribute that **does not exist** on the inferred type. `requests.get_json()`, `my_list.add(x)`, `dict.get_or_default()`. Powered by [Jedi](https://github.com/davidhalter/jedi) static type inference, so it doesn't need to execute the code to know the call is bogus. |
 | 4 | **`phantom_files`** | static | The agent's transcript or diff claims a file was created, but the file isn't on disk. Scans for patterns like `"created file: path/to/x.py"` and cross-checks against the filesystem. Catches hallucinated file creation. |
-| 5 | **`suppressed_exception`** | static | A `try/except` block in newly-added code that **silently swallows** exceptions — bare `except:`, `except Exception: pass`, or `except: logger.error(...)` with no re-raise. Catches the "make the error go away" anti-fix. |
+| 5 | **`suppressed_exception`** | static | A `try/except` block in newly-added code that **silently swallows** exceptions, bare `except:`, `except Exception: pass`, or `except: logger.error(...)` with no re-raise. Catches the "make the error go away" anti-fix. |
 | 6 | **`trace`** | dynamic | Runs the test suite under `sys.settrace` and records every function that actually executes. Any newly-added function whose body never runs gets flagged. Catches agents who add code *and* tests, but the tests never reach the new code. |
 | 7 | **`coverage_delta`** | dynamic | Line-level coverage on just the lines the diff added. If a newly-added line is below 50 % covered, it's flagged. Sharper than whole-file coverage because it ignores pre-existing untested code. |
 
@@ -124,17 +124,17 @@ The scorecard rule (current, intentionally simple): any finding with `confidence
 
 Five distinct surfaces, one scorecard format:
 
-1. **`verdict` CLI** — `verdict run` on any git repo, prints a scorecard, writes `verdict-report.json`.
-2. **`verdict-mcp` MCP server** — exposes `check_diff` as an MCP tool that Bob (or any MCP client) can call mid-conversation.
-3. **Bob Custom Mode + `/verify` slash command** — turns Bob into a read-only auditor that runs Verdict and reports findings without making edits.
-4. **Verdict VS Code tab** — a bottom-panel webview inside Bob (or upstream VS Code) that renders the latest scorecard, persists dismiss/resolve status, and offers a "Fix with Bob" handoff.
-5. **Verdict dashboard** — backfills the entire git history of a repo, scores each commit, and serves a local web UI for trend analytics.
+1. **`verdict` CLI** -- `verdict run` on any git repo, prints a scorecard, writes `verdict-report.json`.
+2. **`verdict-mcp` MCP server** -- exposes `check_diff` as an MCP tool that Bob (or any MCP client) can call mid-conversation.
+3. **Bob Custom Mode + `/verify` slash command** -- turns Bob into a read-only auditor that runs Verdict and reports findings without making edits.
+4. **Verdict VS Code tab** -- a bottom-panel webview inside Bob (or upstream VS Code) that renders the latest scorecard, persists dismiss/resolve status, and offers a "Fix with Bob" handoff.
+5. **Verdict dashboard** -- backfills the entire git history of a repo, scores each commit, and serves a local web UI for trend analytics.
 
 ---
 
 ## Use cases
 
-**Reviewing an AI's pull request.** Before you read the diff, run `verdict run` on the branch. If the verdict is `LIED`, start by reading those findings — the agent is probably hiding something. If `PASS`, the diff is at least internally consistent.
+**Reviewing an AI's pull request.** Before you read the diff, run `verdict run` on the branch. If the verdict is `LIED`, start by reading those findings, the agent is probably hiding something. If `PASS`, the diff is at least internally consistent.
 
 **Inside a Bob coding session.** Install the MCP server and the Verifier mode. After Bob finishes a coding task, switch into Verifier mode (or type `/verify`). Bob will audit its own diff and report findings verbatim with file:line citations. Tight feedback loop, no human review needed for trivial diffs.
 
@@ -202,8 +202,8 @@ pip install -e .   # from the repo root
 
 Either way, this installs two console scripts:
 
-- `verdict` — the audit CLI
-- `verdict-mcp` — the MCP server entry point
+- `verdict` - the audit CLI
+- `verdict-mcp` - the MCP server entry point
 
 Verify:
 
@@ -267,7 +267,7 @@ Restart Bob. You should now see:
 - A **`/verify`** slash command available in any mode (one-shot audit, doesn't switch modes).
 - A `verdict` tool group in Bob's tool list.
 
-Both installers are non-destructive — they preserve existing config and merge.
+Both installers are non-destructive, they preserve existing config and merge.
 
 <!-- SCREENSHOT 04: Bob's chat mode dropdown open, with "Verifier" visible.
      SCREENSHOT 05: Bob's slash-command picker open, with "/verify" visible.
@@ -276,7 +276,7 @@ Both installers are non-destructive — they preserve existing config and merge.
 
 ### 4. Install the Verdict VS Code tab
 
-A prebuilt `.vsix` ships with this repo. Three ways to install it — pick whichever is easiest:
+A prebuilt `.vsix` ships with this repo. Three ways to install it, pick whichever is easiest:
 
 **A. Download → drop in your project → right-click *(easiest, works on a fresh machine without cloning the repo).***
 
@@ -287,15 +287,15 @@ A prebuilt `.vsix` ships with this repo. Three ways to install it — pick which
 
 **B. Command Palette.** `Ctrl+Shift+P` (or `Cmd+Shift+P`) → **Extensions: Install from VSIX…** → navigate to the `.vsix` → Install. Reload.
 
-**C. Terminal — one-liner.** From wherever the `.vsix` lives (works for both Bob and VS Code — Bob ships the same `code` CLI):
+**C. Terminal - one-liner.** From wherever the `.vsix` lives (works for both Bob and VS Code, Bob ships the same `code` CLI):
 
 ```bash
 code --install-extension verdict-vscode-0.2.0.vsix --force
 ```
 
-The `--force` flag overwrites any previous install of the same version. If you get `command not found: code`, the CLI isn't on PATH — open the editor, hit `Ctrl+Shift+P`, run **Shell Command: Install 'code' command in PATH**, then try again. Or just use method A or B — they don't need the shell command.
+The `--force` flag overwrites any previous install of the same version. If you get `command not found: code`, the CLI isn't on PATH, open the editor, hit `Ctrl+Shift+P`, run **Shell Command: Install 'code' command in PATH**, then try again. Or just use method A or B, they don't need the shell command.
 
-After installing by any method, **reload the editor window**, then reveal the bottom panel (`Ctrl+J`) — there will be a new **Verdict** tab. Click **Run Audit** in the toolbar and the panel populates.
+After installing by any method, **reload the editor window**, then reveal the bottom panel (`Ctrl+J`), there will be a new **Verdict** tab. Click **Run Audit** in the toolbar and the panel populates.
 
 <!-- SCREENSHOT 07: the right-click context menu in the file explorer
                    showing "Install Extension VSIX" highlighted on the
@@ -345,7 +345,7 @@ jobs:
 What happens after that:
 
 - Every PR (open + every push) gets a bot comment listing findings, each one a clickable deep link to the exact line.
-- Anyone watching the PR gets the comment in their inbox via GitHub's normal notification path — that's the "Verdict emails me my findings" experience, no SMTP setup needed.
+- Anyone watching the PR gets the comment in their inbox via GitHub's normal notification path, that's the "Verdict emails me my findings" experience, no SMTP setup needed.
 - The check stays **green** by default (informational). Flip `fail-on: lied` if you want it to actually block merges on `LIED` verdicts.
 
 <!-- SCREENSHOT 09: a real PR with the verdict bot comment expanded,
@@ -368,16 +368,16 @@ This walks the git history, scores each commit, writes one JSON per commit into 
 
 ---
 
-## Verdict tab — what's in it
+## Verdict tab (what's in it)
 
 The Verdict tab is a two-pane webview inside the editor's bottom panel:
 
 - **Toolbar:** Run Audit · Run Static Audit · Refresh · diff-range selector · group-by (type / file / severity) · sort-by · fuzzy search.
 - **Left pane:** grouped, filterable list of findings.
-- **Right pane:** detail view for the selected finding — full message, file:line link, dismiss/resolve buttons, **Fix with Bob** handoff (sends the finding into Bob as a fix prompt).
+- **Right pane:** detail view for the selected finding, full message, file:line link, dismiss/resolve buttons, **Fix with Bob** handoff (sends the finding into Bob as a fix prompt).
 - **Status bar:** left-side indicator with the current verdict color.
 
-Status (dismissed / resolved / open) persists across runs in `.bob/verdict-state.json`, keyed by a stable SHA-1 of `(kind, file, line, message)` so re-runs of Verdict don't lose your triage state — unless the underlying finding actually changed.
+Status (dismissed / resolved / open) persists across runs in `.bob/verdict-state.json`, keyed by a stable SHA-1 of `(kind, file, line, message)` so re-runs of Verdict don't lose your triage state, unless the underlying finding actually changed.
 
 Settings (workspace or user `settings.json`):
 
@@ -453,11 +453,11 @@ verdict/
 
 **Static + dynamic, not just one.** Static-only catches dead code and obvious lies but can't tell you whether the tests actually exercise the new function. Dynamic-only requires a working test suite and is slow. Verdict runs both, so a project with no tests still gets meaningful static findings, and a project with tests gets the deeper dynamic signal.
 
-**Per-check timeout, never a stuck audit.** Dynamic checks run pytest under a tracer. If a project's test suite hangs, the MCP server would hang too. Each check is wrapped in a `ThreadPoolExecutor.result(timeout=…)` so one slow check can't take down the whole audit — it produces a `check_timed_out` finding and Verdict moves on.
+**Per-check timeout, never a stuck audit.** Dynamic checks run pytest under a tracer. If a project's test suite hangs, the MCP server would hang too. Each check is wrapped in a `ThreadPoolExecutor.result(timeout=…)` so one slow check can't take down the whole audit, it produces a `check_timed_out` finding and Verdict moves on.
 
 **Stable finding IDs.** Triage state (dismissed / resolved) is keyed by `sha1(kind \0 file \0 line \0 message).slice(0, 12)`. Re-running Verdict doesn't lose your triage decisions *unless* the underlying finding genuinely changed.
 
-**Checks are plug-ins, not hardcoded.** `discover_checks()` walks `verdict.checks` via `pkgutil.iter_modules` and pulls each module's top-level `check` attribute. Adding an eighth check is one new file in `verdict/checks/` — no registry, no wiring.
+**Checks are plug-ins, not hardcoded.** `discover_checks()` walks `verdict.checks` via `pkgutil.iter_modules` and pulls each module's top-level `check` attribute. Adding an eighth check is one new file in `verdict/checks/`, no registry, no wiring.
 
 **Bob-first but not Bob-only.** Every Bob-specific integration (MCP, Custom Mode, slash command, .vsix) is optional. The CLI is the primary surface. Anything that works in Bob works in plain VS Code, and the CLI works without any editor.
 
