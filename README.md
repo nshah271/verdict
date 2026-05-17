@@ -1,13 +1,25 @@
-# [!Verdict]() [Website](https://myverdict.netlify.app/)
+<p align="center">
+  <a href="https://myverdict.netlify.app/">
+    <img src="demo-gifs/verdict-banner.png" alt="Verdict" width="100%">
+  </a>
+</p>
 
- [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-  [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
-  [![MCP](https://img.shields.io/badge/MCP-server-8A2BE2.svg)](https://modelcontextprotocol.io/)
-  [![VS Code Extension](https://img.shields.io/badge/VS%20Code-extension-007ACC.svg?logo=visualstudiocode)](https://marketplace.visualstudio.com/vscode)
-  [![GitHub Action](https://img.shields.io/badge/GitHub-Action-2088FF.svg?logo=githubactions&logoColor=white)](https://github.com/features/actions)
-  [![PyPI](https://img.shields.io/badge/pypi-myverdict-3775A9.svg?logo=pypi&logoColor=white)](https://pypi.org/project/myverdict/)
-  [![Built with IBM Bob](https://img.shields.io/badge/Built%20with-IBM%20Bob-0f62fe.svg)](https://www.ibm.com/)
- 
+<p align="center">
+ <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a>
+  <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.10+-blue.svg" alt="Python 3.10+"></a>
+  <a href="https://modelcontextprotocol.io/"><img src="https://img.shields.io/badge/MCP-server-8A2BE2.svg" alt="MCP"></a>
+  <a href="https://marketplace.visualstudio.com/vscode"><img src="https://img.shields.io/badge/VS%20Code-extension-007ACC.svg?logo=visualstudiocode" alt="VS Code Extension"></a>
+  <a href="https://github.com/features/actions"><img src="https://img.shields.io/badge/GitHub-Action-2088FF.svg?logo=githubactions&logoColor=white" alt="GitHub Action"></a>
+  <a href="https://pypi.org/project/myverdict/"><img src="https://img.shields.io/badge/pypi-myverdict-3775A9.svg?logo=pypi&logoColor=white" alt="PyPI"></a>
+  <a href="https://www.ibm.com/"><img src="https://img.shields.io/badge/Built%20with-IBM%20Bob-0f62fe.svg" alt="Built with IBM Bob"></a>
+</p>
+
+<p align="center">
+  <a href="https://myverdict.netlify.app/">
+    <img src="https://img.shields.io/badge/%E2%96%B6%20Try%20Verdict-Live%20Demo-22E37A?style=for-the-badge&labelColor=0a0f0c&logoColor=white" height="50" alt="Try Verdict — Live Demo">
+  </a>
+</p>
+
 **A lie detector for AI coding agents.**
 
 Verdict audits an AI-generated diff — statically *and* by tracing what actually runs when the tests execute — and returns a single scorecard:
