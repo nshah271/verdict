@@ -16,7 +16,7 @@
 
 <p align="center">
   <a href="https://myverdict.netlify.app/">
-    <img src="https://img.shields.io/badge/%E2%96%B6%20Try%20Verdict-Website-22E37A?style=for-the-badge&labelColor=0a0f0c&logoColor=white" height="50" alt="Try Verdict - Website">
+    <img src="demo-gifs/cta-website.png" height="50" alt="Try Verdict - Website">
   </a>
 </p>
 
