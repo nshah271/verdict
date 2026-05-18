@@ -1,0 +1,225 @@
+# Mock Bob Findings - Code Review Report
+
+## 🔴 Critical Issues
+
+### 1. SQL Injection Vulnerability
+**File:** `src/database/user_repository.py`  
+**Line:** 45  
+**Severity:** Critical
+
+```python
+def get_user_by_email(email):
+    query = f"SELECT * FROM users WHERE email = '{email}'"
+    return db.execute(query)
+```
+
+**Issue:** Direct string interpolation in SQL query allows SQL injection attacks.
+
+**Recommendation:** Use parameterized queries:
+```python
+def get_user_by_email(email):
+    query = "SELECT * FROM users WHERE email = ?"
+    return db.execute(query, (email,))
+```
+
+---
+
+### 2. Hardcoded Credentials
+**File:** `config/database.py`  
+**Line:** 12  
+**Severity:** Critical
+
+```python
+DATABASE_CONFIG = {
+    'host': 'prod-db.example.com',
+    'username': 'admin',
+    'password': 'P@ssw0rd123!'
+}
+```
+
+**Issue:** Production credentials hardcoded in source code.
+
+**Recommendation:** Use environment variables or a secrets manager.
+
+---
+
+## 🟡 High Priority Issues
+
+### 3. Race Condition in Cache Update
+**File:** `src/cache/manager.py`  
+**Line:** 78-85  
+**Severity:** High
+
+```python
+def update_cache(key, value):
+    if key in cache:
+        old_value = cache[key]
+        # Potential race condition here
+        cache[key] = value
+        return old_value
+    return None
+```
+
+**Issue:** Non-atomic read-modify-write operation can cause data corruption in concurrent scenarios.
+
+**Recommendation:** Use thread-safe operations or locking mechanisms.
+
+---
+
+### 4. Memory Leak in Event Handler
+**File:** `src/events/dispatcher.py`  
+**Line:** 34  
+**Severity:** High
+
+```python
+class EventDispatcher:
+    def __init__(self):
+        self.listeners = []
+    
+    def add_listener(self, callback):
+        self.listeners.append(callback)
+        # No removal mechanism!
+```
+
+**Issue:** Event listeners are never removed, causing memory leaks over time.
+
+**Recommendation:** Implement a `remove_listener` method and use weak references.
+
+---
+
+## 🟠 Medium Priority Issues
+
+### 5. Inefficient Database Query
+**File:** `src/api/orders.py`  
+**Line:** 156  
+**Severity:** Medium
+
+```python
+def get_user_orders(user_id):
+    orders = []
+    for order_id in get_order_ids(user_id):
+        order = db.query(f"SELECT * FROM orders WHERE id = {order_id}")
+        orders.append(order)
+    return orders
+```
+
+**Issue:** N+1 query problem - making separate database calls in a loop.
+
+**Recommendation:** Use a single query with JOIN or WHERE IN clause.
+
+---
+
+### 6. Missing Error Handling
+**File:** `src/utils/file_processor.py`  
+**Line:** 23  
+**Severity:** Medium
+
+```python
+def process_file(filepath):
+    with open(filepath, 'r') as f:
+        data = json.load(f)
+    return transform_data(data)
+```
+
+**Issue:** No error handling for file operations or JSON parsing.
+
+**Recommendation:** Add try-except blocks for FileNotFoundError and JSONDecodeError.
+
+---
+
+### 7. Mutable Default Argument
+**File:** `src/models/user.py`  
+**Line:** 67  
+**Severity:** Medium
+
+```python
+def add_permissions(user, permissions=[]):
+    permissions.append('read')
+    user.permissions = permissions
+    return user
+```
+
+**Issue:** Mutable default argument creates shared state across function calls.
+
+**Recommendation:** Use `None` as default and create new list inside function.
+
+---
+
+## 🟢 Low Priority Issues
+
+### 8. Inconsistent Naming Convention
+**File:** `src/services/payment_service.py`  
+**Line:** Multiple  
+**Severity:** Low
+
+```python
+def ProcessPayment(amount):  # PascalCase
+    user_id = get_user()      # snake_case
+    PaymentID = generate_id() # Mixed case
+```
+
+**Issue:** Inconsistent naming conventions reduce code readability.
+
+**Recommendation:** Follow PEP 8 - use snake_case for functions and variables.
+
+---
+
+### 9. Unused Import
+**File:** `src/api/routes.py`  
+**Line:** 3  
+**Severity:** Low
+
+```python
+import json
+import requests
+from datetime import datetime, timedelta  # timedelta never used
+```
+
+**Issue:** Unused imports clutter the code and may confuse developers.
+
+**Recommendation:** Remove unused imports.
+
+---
+
+### 10. Magic Numbers
+**File:** `src/utils/validator.py`  
+**Line:** 45  
+**Severity:** Low
+
+```python
+def validate_password(password):
+    if len(password) < 8:
+        return False
+    if len(password) > 128:
+        return False
+```
+
+**Issue:** Magic numbers without explanation reduce code maintainability.
+
+**Recommendation:** Use named constants:
+```python
+MIN_PASSWORD_LENGTH = 8
+MAX_PASSWORD_LENGTH = 128
+```
+
+---
+
+## 📊 Summary
+
+- **Critical Issues:** 2
+- **High Priority:** 2
+- **Medium Priority:** 3
+- **Low Priority:** 3
+- **Total Issues Found:** 10
+
+## 🎯 Recommended Actions
+
+1. **Immediate:** Fix SQL injection and remove hardcoded credentials
+2. **This Sprint:** Address race condition and memory leak
+3. **Next Sprint:** Optimize database queries and improve error handling
+4. **Backlog:** Clean up code style issues and remove unused imports
+
+---
+
+*Generated by Bob - Your AI Code Review Assistant*  
+*Review Date: 2026-05-16*
